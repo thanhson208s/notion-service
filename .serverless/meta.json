@@ -1,0 +1,624 @@
+{
+  "D:\\repos\\notion-service": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.14",
+    "isWithinCompose": false,
+    "isCompose": false,
+    "composeOrgName": null,
+    "composeResolverProviders": {
+      "default-aws-credential-resolver": "<REDACTED>",
+      "sls": {
+        "instance": {
+          "credentials": "<REDACTED>",
+          "serviceConfigFile": {
+            "org": "gootube",
+            "app": "gootube",
+            "service": "notion-service",
+            "provider": {
+              "name": "aws",
+              "runtime": "nodejs20.x",
+              "region": "ap-southeast-1",
+              "stage": "dev",
+              "versionFunctions": true,
+              "compiledCloudFormationTemplate": {
+                "AWSTemplateFormatVersion": "2010-09-09",
+                "Description": "The AWS CloudFormation template for this Serverless application",
+                "Resources": {
+                  "RateHandlerLogGroup": {
+                    "Type": "AWS::Logs::LogGroup",
+                    "Properties": {
+                      "LogGroupName": "/aws/lambda/notion-service-dev-rateHandler"
+                    }
+                  },
+                  "IamRoleLambdaExecution": {
+                    "Type": "AWS::IAM::Role",
+                    "Properties": {
+                      "AssumeRolePolicyDocument": {
+                        "Version": "2012-10-17",
+                        "Statement": [
+                          {
+                            "Effect": "Allow",
+                            "Principal": {
+                              "Service": [
+                                "lambda.amazonaws.com"
+                              ]
+                            },
+                            "Action": [
+                              "sts:AssumeRole"
+                            ]
+                          }
+                        ]
+                      },
+                      "Policies": [
+                        {
+                          "PolicyName": {
+                            "Fn::Join": [
+                              "-",
+                              [
+                                "notion-service",
+                                "dev",
+                                "lambda"
+                              ]
+                            ]
+                          },
+                          "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                              {
+                                "Effect": "Allow",
+                                "Action": [
+                                  "logs:CreateLogStream",
+                                  "logs:CreateLogGroup",
+                                  "logs:TagResource"
+                                ],
+                                "Resource": [
+                                  {
+                                    "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/notion-service-dev*:*"
+                                  }
+                                ]
+                              },
+                              {
+                                "Effect": "Allow",
+                                "Action": [
+                                  "logs:PutLogEvents"
+                                ],
+                                "Resource": [
+                                  {
+                                    "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/notion-service-dev*:*:*"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      ],
+                      "Path": "/",
+                      "RoleName": {
+                        "Fn::Join": [
+                          "-",
+                          [
+                            "notion-service",
+                            "dev",
+                            {
+                              "Ref": "AWS::Region"
+                            },
+                            "lambdaRole"
+                          ]
+                        ]
+                      }
+                    }
+                  },
+                  "RateHandlerLambdaFunction": {
+                    "Type": "AWS::Lambda::Function",
+                    "Properties": {
+                      "Code": {
+                        "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
+                        "S3Key": "serverless/notion-service/dev/1733302108586-2024-12-04T08:48:28.586Z/notion-service.zip"
+                      },
+                      "Handler": "index.handler",
+                      "Runtime": "nodejs20.x",
+                      "FunctionName": "notion-service-dev-rateHandler",
+                      "MemorySize": 1024,
+                      "Timeout": 6,
+                      "Role": {
+                        "Fn::GetAtt": [
+                          "IamRoleLambdaExecution",
+                          "Arn"
+                        ]
+                      }
+                    },
+                    "DependsOn": [
+                      "RateHandlerLogGroup"
+                    ]
+                  },
+                  "RateHandlerLambdaVersionALEt9JWo3zlrUPXiUnspiUp4Z1sm53eoF5UooCNn2o": {
+                    "Type": "AWS::Lambda::Version",
+                    "DeletionPolicy": "Retain",
+                    "Properties": {
+                      "FunctionName": {
+                        "Ref": "RateHandlerLambdaFunction"
+                      },
+                      "CodeSha256": "Lmqbj//cbNGf70I6dHMMG5VZlbGygrUOvYdEHWT0bME="
+                    }
+                  },
+                  "RateHandlerEventsRuleSchedule1": {
+                    "Type": "AWS::Events::Rule",
+                    "Properties": {
+                      "ScheduleExpression": "cron(0 0 * * ? *)",
+                      "State": "ENABLED",
+                      "Description": "Trigger review today attempt",
+                      "Targets": [
+                        {
+                          "Arn": {
+                            "Fn::GetAtt": [
+                              "RateHandlerLambdaFunction",
+                              "Arn"
+                            ]
+                          },
+                          "Id": "rateHandlerSchedule"
+                        }
+                      ]
+                    }
+                  },
+                  "RateHandlerLambdaPermissionEventsRuleSchedule1": {
+                    "Type": "AWS::Lambda::Permission",
+                    "Properties": {
+                      "FunctionName": {
+                        "Fn::GetAtt": [
+                          "RateHandlerLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "Action": "lambda:InvokeFunction",
+                      "Principal": "events.amazonaws.com",
+                      "SourceArn": {
+                        "Fn::GetAtt": [
+                          "RateHandlerEventsRuleSchedule1",
+                          "Arn"
+                        ]
+                      }
+                    }
+                  },
+                  "RateHandlerEventsRuleSchedule2": {
+                    "Type": "AWS::Events::Rule",
+                    "Properties": {
+                      "ScheduleExpression": "cron(0 8 * * ? *)",
+                      "State": "ENABLED",
+                      "Description": "Trigger generate today attempt",
+                      "Targets": [
+                        {
+                          "Arn": {
+                            "Fn::GetAtt": [
+                              "RateHandlerLambdaFunction",
+                              "Arn"
+                            ]
+                          },
+                          "Id": "rateHandlerSchedule"
+                        }
+                      ]
+                    }
+                  },
+                  "RateHandlerLambdaPermissionEventsRuleSchedule2": {
+                    "Type": "AWS::Lambda::Permission",
+                    "Properties": {
+                      "FunctionName": {
+                        "Fn::GetAtt": [
+                          "RateHandlerLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "Action": "lambda:InvokeFunction",
+                      "Principal": "events.amazonaws.com",
+                      "SourceArn": {
+                        "Fn::GetAtt": [
+                          "RateHandlerEventsRuleSchedule2",
+                          "Arn"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "Outputs": {
+                  "ServerlessDeploymentBucketName": {
+                    "Value": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
+                    "Export": {
+                      "Name": "sls-notion-service-dev-ServerlessDeploymentBucketName"
+                    }
+                  },
+                  "RateHandlerLambdaFunctionQualifiedArn": {
+                    "Description": "Current Lambda function version",
+                    "Value": {
+                      "Ref": "RateHandlerLambdaVersionALEt9JWo3zlrUPXiUnspiUp4Z1sm53eoF5UooCNn2o"
+                    },
+                    "Export": {
+                      "Name": "sls-notion-service-dev-RateHandlerLambdaFunctionQualifiedArn"
+                    }
+                  }
+                }
+              },
+              "vpc": {}
+            },
+            "functions": {
+              "rateHandler": {
+                "handler": "index.handler",
+                "events": [
+                  {
+                    "schedule": {
+                      "rate": [
+                        "cron(0 0 * * ? *)"
+                      ],
+                      "description": "Trigger review today attempt"
+                    }
+                  },
+                  {
+                    "schedule": {
+                      "rate": [
+                        "cron(0 8 * * ? *)"
+                      ],
+                      "description": "Trigger generate today attempt"
+                    }
+                  }
+                ],
+                "name": "notion-service-dev-rateHandler",
+                "package": {},
+                "memory": 1024,
+                "timeout": 6,
+                "runtime": "nodejs20.x",
+                "vpc": {},
+                "versionLogicalId": "RateHandlerLambdaVersionALEt9JWo3zlrUPXiUnspiUp4Z1sm53eoF5UooCNn2o"
+              }
+            }
+          },
+          "configFileDirPath": "D:\\repos\\notion-service",
+          "config": {
+            "type": "sls"
+          },
+          "options": {},
+          "stage": "dev",
+          "dashboard": {
+            "aws": {
+              "accessKeyId": "<REDACTED>",
+              "secretAccessKey": "<REDACTED>",
+              "sessionToken": "<REDACTED>",
+              "$source": {
+                "CREDENTIALS_CODE": "<REDACTED>"
+              }
+            },
+            "params": null,
+            "accessKey": "<REDACTED>"
+          },
+          "logger": {
+            "namespace": "s:core:resolver:sls",
+            "prefix": null,
+            "prefixColor": null
+          },
+          "_credentialsPromise": "<REDACTED>"
+        },
+        "resolvers": {}
+      }
+    },
+    "composeServiceName": null,
+    "servicePath": "D:\\repos\\notion-service",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "org": "gootube",
+      "app": "gootube",
+      "service": "notion-service",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs20.x",
+        "region": "ap-southeast-1",
+        "stage": "dev",
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "RateHandlerLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/notion-service-dev-rateHandler"
+              }
+            },
+            "IamRoleLambdaExecution": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": [
+                          "lambda.amazonaws.com"
+                        ]
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "Policies": [
+                  {
+                    "PolicyName": {
+                      "Fn::Join": [
+                        "-",
+                        [
+                          "notion-service",
+                          "dev",
+                          "lambda"
+                        ]
+                      ]
+                    },
+                    "PolicyDocument": {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogStream",
+                            "logs:CreateLogGroup",
+                            "logs:TagResource"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/notion-service-dev*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/notion-service-dev*:*:*"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "Path": "/",
+                "RoleName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "notion-service",
+                      "dev",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "lambdaRole"
+                    ]
+                  ]
+                }
+              }
+            },
+            "RateHandlerLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
+                  "S3Key": "serverless/notion-service/dev/1733302108586-2024-12-04T08:48:28.586Z/notion-service.zip"
+                },
+                "Handler": "index.handler",
+                "Runtime": "nodejs20.x",
+                "FunctionName": "notion-service-dev-rateHandler",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "RateHandlerLogGroup"
+              ]
+            },
+            "RateHandlerLambdaVersionALEt9JWo3zlrUPXiUnspiUp4Z1sm53eoF5UooCNn2o": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "RateHandlerLambdaFunction"
+                },
+                "CodeSha256": "Lmqbj//cbNGf70I6dHMMG5VZlbGygrUOvYdEHWT0bME="
+              }
+            },
+            "RateHandlerEventsRuleSchedule1": {
+              "Type": "AWS::Events::Rule",
+              "Properties": {
+                "ScheduleExpression": "cron(0 0 * * ? *)",
+                "State": "ENABLED",
+                "Description": "Trigger review today attempt",
+                "Targets": [
+                  {
+                    "Arn": {
+                      "Fn::GetAtt": [
+                        "RateHandlerLambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "Id": "rateHandlerSchedule"
+                  }
+                ]
+              }
+            },
+            "RateHandlerLambdaPermissionEventsRuleSchedule1": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "RateHandlerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "events.amazonaws.com",
+                "SourceArn": {
+                  "Fn::GetAtt": [
+                    "RateHandlerEventsRuleSchedule1",
+                    "Arn"
+                  ]
+                }
+              }
+            },
+            "RateHandlerEventsRuleSchedule2": {
+              "Type": "AWS::Events::Rule",
+              "Properties": {
+                "ScheduleExpression": "cron(0 8 * * ? *)",
+                "State": "ENABLED",
+                "Description": "Trigger generate today attempt",
+                "Targets": [
+                  {
+                    "Arn": {
+                      "Fn::GetAtt": [
+                        "RateHandlerLambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "Id": "rateHandlerSchedule"
+                  }
+                ]
+              }
+            },
+            "RateHandlerLambdaPermissionEventsRuleSchedule2": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "RateHandlerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "events.amazonaws.com",
+                "SourceArn": {
+                  "Fn::GetAtt": [
+                    "RateHandlerEventsRuleSchedule2",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
+              "Export": {
+                "Name": "sls-notion-service-dev-ServerlessDeploymentBucketName"
+              }
+            },
+            "RateHandlerLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "RateHandlerLambdaVersionALEt9JWo3zlrUPXiUnspiUp4Z1sm53eoF5UooCNn2o"
+              },
+              "Export": {
+                "Name": "sls-notion-service-dev-RateHandlerLambdaFunctionQualifiedArn"
+              }
+            }
+          }
+        },
+        "vpc": {}
+      },
+      "functions": {
+        "rateHandler": {
+          "handler": "index.handler",
+          "events": [
+            {
+              "schedule": {
+                "rate": [
+                  "cron(0 0 * * ? *)"
+                ],
+                "description": "Trigger review today attempt"
+              }
+            },
+            {
+              "schedule": {
+                "rate": [
+                  "cron(0 8 * * ? *)"
+                ],
+                "description": "Trigger generate today attempt"
+              }
+            }
+          ],
+          "name": "notion-service-dev-rateHandler",
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "nodejs20.x",
+          "vpc": {},
+          "versionLogicalId": "RateHandlerLambdaVersionALEt9JWo3zlrUPXiUnspiUp4Z1sm53eoF5UooCNn2o"
+        }
+      }
+    },
+    "serviceRawFile": "# \"org\" ensures this Service is used with the correct Serverless Framework Access Key.\norg: gootube\n# \"app\" enables Serverless Framework Dashboard features and sharing them with other Services.\napp: gootube\n# \"service\" is the name of this project. This will also be added to your AWS resource names.\nservice: notion-service\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: ap-southeast-1\n\nfunctions:\n  rateHandler:\n    handler: index.handler\n    events:\n      - schedule:\n          rate: cron(0 0 * * ? *)   #Trigger every day at 00:00 UTC\n          description: Trigger review today attempt\n      - schedule:\n          rate: cron(0 8 * * ? *)   #Trigger every day at 08:00 UTC\n          description: Trigger generate today attempt\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {},
+    "error": null,
+    "params": {},
+    "machineId": "c00120d060d60c62970e48c4ec58bb97",
+    "stage": "dev",
+    "accessKeyV2": "<REDACTED>",
+    "accessKeyV1": "<REDACTED>",
+    "orgId": "2929a792-9c47-494b-aceb-5a50e95f30be",
+    "orgName": "gootube",
+    "userId": "kfFMZm0JkHCCpQfLJP",
+    "dashboard": {
+      "isEnabledForService": true,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": {
+        "providers": true,
+        "monitoring": false
+      },
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": "STxZsK7NgnYY4J1tPh",
+      "serviceProvider": {
+        "accessKeyId": "<REDACTED>",
+        "secretAccessKey": "<REDACTED>",
+        "sessionToken": "<REDACTED>",
+        "$source": {
+          "CREDENTIALS_CODE": "<REDACTED>"
+        }
+      },
+      "instanceParameters": null
+    },
+    "userName": "gootube",
+    "subscription": null,
+    "userEmail": "thanhson208s@gmail.com",
+    "serviceProviderAwsRegion": "ap-southeast-1",
+    "serviceProviderAwsCredentials": "<REDACTED>",
+    "serviceProviderAwsAccountId": "467614041356",
+    "projectType": "traditional",
+    "versionSf": "4.4.14",
+    "serviceProviderAwsCfStackName": "notion-service-dev",
+    "integrations": {},
+    "serviceUniqueId": "arn:aws:cloudformation:ap-southeast-1:467614041356:stack/notion-service-dev/8e0ed5a0-b21c-11ef-9822-02ec09f151a9",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-southeast-1:467614041356:stack/notion-service-dev/8e0ed5a0-b21c-11ef-9822-02ec09f151a9",
+    "serviceProviderAwsCfStackCreated": "2024-12-04T08:48:39.271Z",
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "RateHandlerLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-southeast-1:467614041356:function:notion-service-dev-rateHandler:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-notion-service-dev-RateHandlerLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
+        "ExportName": "sls-notion-service-dev-ServerlessDeploymentBucketName"
+      }
+    ]
+  }
+}

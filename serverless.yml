@@ -1,0 +1,22 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: gootube
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: gootube
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: notion-service
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-southeast-1
+
+functions:
+  rateHandler:
+    handler: index.handler
+    events:
+      - schedule:
+          rate: cron(0 0 * * ? *)   #Trigger every day at 00:00 UTC
+          description: Trigger review today attempt
+      - schedule:
+          rate: cron(0 8 * * ? *)   #Trigger every day at 08:00 UTC
+          description: Trigger generate today attempt

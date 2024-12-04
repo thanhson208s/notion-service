@@ -1,6 +1,7 @@
 import { Client } from '@notionhq/client';
 import dotenv from 'dotenv';
 import moment from 'moment';
+import axios from 'axios';
 
 // Load environment variables
 dotenv.config();
@@ -11,6 +12,16 @@ const notion = new Client({ auth: process.env.NOTION_API_KEY });
 // Test start from here
 const todayDate = moment().format('YYYY-MM-DD');
 
+// Send Telegram alert
+const sendTelegramMessage = async(message) => {
+    try {
+        const url = process.env.TELEGRAM_URL.replace("{{message}}", encodeURIComponent(message));
+        await axios.get(url);
+    } catch(error) {
+        console.error("Error sending telegram message!");
+    }
+}
+
 // Get all the word entries that need reviewing today
 const getTodayWordList = async() => {
     try {
@@ -18,10 +29,26 @@ const getTodayWordList = async() => {
         const response = await notion.databases.query({
             database_id: process.env.NOTION_WORD_LIST_DATABASE_ID,
             filter: {
-                property: 'Next reviewed date',
-                date: {
-                    equals: todayDate
-                }
+                and: [
+                    {
+                        property: 'Next reviewed date',
+                        date: {
+                            equals: todayDate
+                        }
+                    },
+                    {
+                        property: 'Completed',
+                        checkbox: {
+                            equals: true
+                        }
+                    },
+                    {
+                        property: 'Draft',
+                        checkbox: {
+                            equals: false
+                        }
+                    }
+                ]
             }
         });
 
@@ -256,49 +283,77 @@ const reassignWordLevels = async(results) => {
             if (responseTable.results[0].table.has_column_header)
                 rows.shift();
 
-            rows.forEach(async(row) => {
-                //request page object
-                const cells = row.table_row.cells;
-                const pageId = cells[0][0].mention.page.id;
-                const responsePage = await notion.pages.retrieve({ 
-                    page_id: pageId
-                });
+            //update new level and last reviewed date for each word in the attempt
+            let overallGrade = 0;
+            await Promise.all(
+                rows.map(async(row) => {
+                    //request page object
+                    const cells = row.table_row.cells;
+                    const pageId = cells[0][0].mention.page.id;
+                    const responsePage = await notion.pages.retrieve({ 
+                        page_id: pageId
+                    });
 
-                //check valid response
-                if (!responsePage.object || responsePage.object !== "page") {
-                    throw new Error(`Retrieve page for ${pageId} failed!`, {cause: responsePage});
-                }
-
-                //check level match
-                const currentLevel = responsePage.properties["Level"].number;
-                if (currentLevel !== Number(cells[1][0].text.content)) {
-                    throw new Error(`Page ${pageId} is already reviewed!`);
-                }
-
-                //update last reviewed date and level
-                const responseUpdate = await notion.pages.update({
-                    page_id: pageId,
-                    properties: {
-                        "Last reviewed": {
-                            date: {
-                                start: responsePage.properties["Next reviewed date"].formula.date.start
-                            }
-                        },
-                        "Level": {
-                            number: cells[5][0].text.content.trim().toLowerCase() === "correct" ? Math.min(5, currentLevel + 1) : Math.max(0, currentLevel - 1)
-                        }
+                    //check valid response
+                    if (!responsePage.object || responsePage.object !== "page") {
+                        throw new Error(`Retrieve page for ${pageId} failed!`, {cause: responsePage});
                     }
-                });
 
-                //check valid response
-                if (!responseUpdate.object || responseUpdate.object !== "page") {
-                    throw new Error(`Update properties for ${pageId} failed!`, {cause: responseUpdate});
+                    //increase grade for correct answer
+                    const isCorrect = cells[5][0].text.content.trim().toLowerCase() === "correct";
+                    if (isCorrect)
+                        overallGrade++;     
+
+                    //check level match and not completed and not draft
+                    const currentLevel = responsePage.properties["Level"].number;
+                    const isCompleted = responsePage.properties["Completed"].checkbox;
+                    const isDraft = responsePage.properties["Draft"].checkbox;
+                    if (currentLevel !== Number(cells[1][0].text.content) || isCompleted || isDraft) {
+                        return;
+                    }
+
+                    //update last reviewed date and level
+                    const responseUpdate = await notion.pages.update({
+                        page_id: pageId,
+                        properties: {
+                            "Last reviewed": {
+                                date: {
+                                    start: responsePage.properties["Next reviewed date"].formula.date.start
+                                }
+                            },
+                            "Level": {
+                                number: isCorrect ? Math.min(5, currentLevel + 1) : Math.max(0, currentLevel - 1)
+                            },
+                            "Completed": {
+                                checkbox: currentLevel === 5 && isCorrect
+                            }
+                        }
+                    });
+
+                    //check valid response
+                    if (!responseUpdate.object || responseUpdate.object !== "page") {
+                        throw new Error(`Update properties for ${pageId} failed!`, {cause: responseUpdate});
+                    }
+                })
+            );
+
+            //set overall grade for the attempt and marked the attemp as reviewed
+            const responseGrade = await notion.pages.update({
+                page_id: page.id,
+                properties: {
+                    "Grade": {
+                        number: Math.round(overallGrade / rows.length * 100) / 100
+                    },
+                    "Reviewed": {
+                        checkbox: true
+                    }
                 }
             });
 
-            //overall grade for the attempt
-
-            //marked the attempt as reviewed
+            //check valid response
+            if (!responseGrade.object || responseGrade.object !== "page") {
+                throw new Error(`Update properties for ${page.id} failed!`, {cause: responseGrade});
+            }
         });
     } catch (error) {
         throw new Error("Error while reassigning word levels", {cause: error});
@@ -306,29 +361,49 @@ const reassignWordLevels = async(results) => {
 }
 
 // Handler for review task
-// export const handler = async(event) => {
+const reviewTodayAttempt = async() => {
     try {
-        //TODO: Telegram alert
+        await sendTelegramMessage("Start review today's attempt");
+        console.log("Start review today's attempt");
         const results = await getLastAttempts();
         if (results.length > 0)
             await reassignWordLevels(results);
-        //TODO: Telegram alert
+        await sendTelegramMessage("Finish review today's attempt");
+        console.log("Finish review today's attempt");
     } catch (error) {
-        //TODO: Telegram alert
-        console.log(error);
+        await sendTelegramMessage("Error review today's attempt");
+        console.error(error);
     }
-// }
+}
 
 // Handler for generate task
-// export const handler = async(event) => {
-    // try {
-    //     //TODO: Telegram alert
-    //     const results = await getTodayWordList();
-    //     if (results.length > 0)
-    //         await createTodayAttempt(results);
-    //     //TODO: Telegram alert
-    // } catch (error) {
-    //     //TODO: Telegram alert
-    //     console.log(error);
-    // }
-// }
+const generateTodayAttempt = async() => {
+    try {
+        await sendTelegramMessage("Start generate today's attempt");
+        console.log("Start generate today's attempt");
+        const results = await getTodayWordList();
+        if (results.length > 0)
+            await createTodayAttempt(results);
+        await sendTelegramMessage("Finish generate today's attempt");
+        console.log("Finish generate today's attempt");
+    } catch (error) {
+        await sendTelegramMessage("Error generate today's attempt");
+        console.log(error);
+    }
+}
+
+export const handler = async (event) => {
+    console.log("Trigger time: ", event.time);
+
+    const triggerHour = new Date(event.time).getUTCHours();
+    if (triggerHour === 0) {
+        await reviewTodayAttempt();
+        return;
+    }
+    if (triggerHour === 8) {
+        await generateTodayAttempt();
+        return;
+    }
+
+    console.log("Unexpected trigger time!");
+}
