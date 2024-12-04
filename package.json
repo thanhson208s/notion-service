@@ -1,0 +1,19 @@
+{
+  "name": "notion-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@notionhq/client": "^2.2.15",
+    "dotenv": "^16.4.5",
+    "moment": "^2.30.1",
+    "serverless": "^4.4.13"
+  }
+}
