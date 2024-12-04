@@ -91,7 +91,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
-          "S3Key": "serverless/notion-service/dev/1733302108586-2024-12-04T08:48:28.586Z/notion-service.zip"
+          "S3Key": "serverless/notion-service/dev/1733306639088-2024-12-04T10:03:59.088Z/notion-service.zip"
         },
         "Handler": "index.handler",
         "Runtime": "nodejs20.x",
@@ -109,14 +109,14 @@
         "RateHandlerLogGroup"
       ]
     },
-    "RateHandlerLambdaVersionALEt9JWo3zlrUPXiUnspiUp4Z1sm53eoF5UooCNn2o": {
+    "RateHandlerLambdaVersionVrNzsPW7pabnvMz0qRaB8UkiZ7VBAM46Gha7PGFL0A8": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "RateHandlerLambdaFunction"
         },
-        "CodeSha256": "Lmqbj//cbNGf70I6dHMMG5VZlbGygrUOvYdEHWT0bME="
+        "CodeSha256": "CnAMYa382byIM8C2N7H21IpqCoiYmgs9wEHi2rFn7b0="
       }
     },
     "RateHandlerEventsRuleSchedule1": {
@@ -206,7 +206,7 @@
     "RateHandlerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "RateHandlerLambdaVersionALEt9JWo3zlrUPXiUnspiUp4Z1sm53eoF5UooCNn2o"
+        "Ref": "RateHandlerLambdaVersionVrNzsPW7pabnvMz0qRaB8UkiZ7VBAM46Gha7PGFL0A8"
       },
       "Export": {
         "Name": "sls-notion-service-dev-RateHandlerLambdaFunctionQualifiedArn"
