@@ -15,8 +15,8 @@ functions:
     handler: index.handler
     events:
       - schedule:
-          rate: cron(0 0 * * ? *)   #Trigger every day at 00:00 UTC
+          rate: cron(0 17 * * ? *)  #Trigger every day at 17:00 UTC - 00:00 GMT+7
           description: Trigger review today attempt
       - schedule:
-          rate: cron(0 8 * * ? *)   #Trigger every day at 08:00 UTC
+          rate: cron(0 1 * * ? *)   #Trigger every day at 01:00 UTC - 08:00 GMT+7
           description: Trigger generate today attempt
