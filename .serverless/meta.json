@@ -1,7 +1,7 @@
 {
   "D:\\repos\\notion-service": {
     "versionSfCore": null,
-    "versionFramework": "4.4.14",
+    "versionFramework": "4.4.16",
     "isWithinCompose": false,
     "isCompose": false,
     "composeOrgName": null,
@@ -24,10 +24,22 @@
                 "AWSTemplateFormatVersion": "2010-09-09",
                 "Description": "The AWS CloudFormation template for this Serverless application",
                 "Resources": {
-                  "RateHandlerLogGroup": {
+                  "GenerateHandlerLogGroup": {
                     "Type": "AWS::Logs::LogGroup",
                     "Properties": {
-                      "LogGroupName": "/aws/lambda/notion-service-dev-rateHandler"
+                      "LogGroupName": "/aws/lambda/notion-service-dev-generateHandler"
+                    }
+                  },
+                  "ReviewHandlerLogGroup": {
+                    "Type": "AWS::Logs::LogGroup",
+                    "Properties": {
+                      "LogGroupName": "/aws/lambda/notion-service-dev-reviewHandler"
+                    }
+                  },
+                  "UrlHandlerLogGroup": {
+                    "Type": "AWS::Logs::LogGroup",
+                    "Properties": {
+                      "LogGroupName": "/aws/lambda/notion-service-dev-urlHandler"
                     }
                   },
                   "IamRoleLambdaExecution": {
@@ -108,16 +120,16 @@
                       }
                     }
                   },
-                  "RateHandlerLambdaFunction": {
+                  "GenerateHandlerLambdaFunction": {
                     "Type": "AWS::Lambda::Function",
                     "Properties": {
                       "Code": {
                         "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
-                        "S3Key": "serverless/notion-service/dev/1733306639088-2024-12-04T10:03:59.088Z/notion-service.zip"
+                        "S3Key": "serverless/notion-service/dev/1734428234817-2024-12-17T09:37:14.817Z/notion-service.zip"
                       },
-                      "Handler": "index.handler",
+                      "Handler": "generateHandler.handler",
                       "Runtime": "nodejs20.x",
-                      "FunctionName": "notion-service-dev-rateHandler",
+                      "FunctionName": "notion-service-dev-generateHandler",
                       "MemorySize": 1024,
                       "Timeout": 6,
                       "Role": {
@@ -128,82 +140,136 @@
                       }
                     },
                     "DependsOn": [
-                      "RateHandlerLogGroup"
+                      "GenerateHandlerLogGroup"
                     ]
                   },
-                  "RateHandlerLambdaVersionVrNzsPW7pabnvMz0qRaB8UkiZ7VBAM46Gha7PGFL0A8": {
+                  "ReviewHandlerLambdaFunction": {
+                    "Type": "AWS::Lambda::Function",
+                    "Properties": {
+                      "Code": {
+                        "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
+                        "S3Key": "serverless/notion-service/dev/1734428234817-2024-12-17T09:37:14.817Z/notion-service.zip"
+                      },
+                      "Handler": "reviewHandler.handler",
+                      "Runtime": "nodejs20.x",
+                      "FunctionName": "notion-service-dev-reviewHandler",
+                      "MemorySize": 1024,
+                      "Timeout": 6,
+                      "Role": {
+                        "Fn::GetAtt": [
+                          "IamRoleLambdaExecution",
+                          "Arn"
+                        ]
+                      }
+                    },
+                    "DependsOn": [
+                      "ReviewHandlerLogGroup"
+                    ]
+                  },
+                  "UrlHandlerLambdaFunction": {
+                    "Type": "AWS::Lambda::Function",
+                    "Properties": {
+                      "Code": {
+                        "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
+                        "S3Key": "serverless/notion-service/dev/1734428234817-2024-12-17T09:37:14.817Z/notion-service.zip"
+                      },
+                      "Handler": "urlHandler.handler",
+                      "Runtime": "nodejs20.x",
+                      "FunctionName": "notion-service-dev-urlHandler",
+                      "MemorySize": 1024,
+                      "Timeout": 6,
+                      "Role": {
+                        "Fn::GetAtt": [
+                          "IamRoleLambdaExecution",
+                          "Arn"
+                        ]
+                      }
+                    },
+                    "DependsOn": [
+                      "UrlHandlerLogGroup"
+                    ]
+                  },
+                  "GenerateHandlerLambdaVersion9LjMlRM5K5B7sAhlu9eNsyEFs9XnySfhHhiRGeu0K4": {
                     "Type": "AWS::Lambda::Version",
                     "DeletionPolicy": "Retain",
                     "Properties": {
                       "FunctionName": {
-                        "Ref": "RateHandlerLambdaFunction"
+                        "Ref": "GenerateHandlerLambdaFunction"
                       },
-                      "CodeSha256": "CnAMYa382byIM8C2N7H21IpqCoiYmgs9wEHi2rFn7b0="
+                      "CodeSha256": "qeOQa3lGi5Ctd1ayc9IBKoj/f7UiI6WQT1tWm3QgQSw="
                     }
                   },
-                  "RateHandlerEventsRuleSchedule1": {
-                    "Type": "AWS::Events::Rule",
-                    "Properties": {
-                      "ScheduleExpression": "cron(0 0 * * ? *)",
-                      "State": "ENABLED",
-                      "Description": "Trigger review today attempt",
-                      "Targets": [
-                        {
-                          "Arn": {
-                            "Fn::GetAtt": [
-                              "RateHandlerLambdaFunction",
-                              "Arn"
-                            ]
-                          },
-                          "Id": "rateHandlerSchedule"
-                        }
-                      ]
-                    }
-                  },
-                  "RateHandlerLambdaPermissionEventsRuleSchedule1": {
-                    "Type": "AWS::Lambda::Permission",
+                  "ReviewHandlerLambdaVersion90y9NIne9FRJjbPhoWyMcOIohWxXXtnzAow6Xu8A": {
+                    "Type": "AWS::Lambda::Version",
+                    "DeletionPolicy": "Retain",
                     "Properties": {
                       "FunctionName": {
-                        "Fn::GetAtt": [
-                          "RateHandlerLambdaFunction",
-                          "Arn"
-                        ]
+                        "Ref": "ReviewHandlerLambdaFunction"
                       },
-                      "Action": "lambda:InvokeFunction",
-                      "Principal": "events.amazonaws.com",
-                      "SourceArn": {
+                      "CodeSha256": "qeOQa3lGi5Ctd1ayc9IBKoj/f7UiI6WQT1tWm3QgQSw="
+                    }
+                  },
+                  "UrlHandlerLambdaVersionvnUTQRzgVWqTE8FaCzJcLY3ZNhSMzM1k3lpVmrkdlo": {
+                    "Type": "AWS::Lambda::Version",
+                    "DeletionPolicy": "Retain",
+                    "Properties": {
+                      "FunctionName": {
+                        "Ref": "UrlHandlerLambdaFunction"
+                      },
+                      "CodeSha256": "qeOQa3lGi5Ctd1ayc9IBKoj/f7UiI6WQT1tWm3QgQSw="
+                    }
+                  },
+                  "UrlHandlerLambdaFunctionUrl": {
+                    "Type": "AWS::Lambda::Url",
+                    "Properties": {
+                      "AuthType": "NONE",
+                      "TargetFunctionArn": {
                         "Fn::GetAtt": [
-                          "RateHandlerEventsRuleSchedule1",
+                          "UrlHandlerLambdaFunction",
                           "Arn"
                         ]
                       }
                     }
                   },
-                  "RateHandlerEventsRuleSchedule2": {
+                  "UrlHandlerLambdaPermissionFnUrl": {
+                    "Type": "AWS::Lambda::Permission",
+                    "Properties": {
+                      "FunctionName": {
+                        "Fn::GetAtt": [
+                          "UrlHandlerLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "Action": "lambda:InvokeFunctionUrl",
+                      "Principal": "*",
+                      "FunctionUrlAuthType": "NONE"
+                    }
+                  },
+                  "GenerateHandlerEventsRuleSchedule1": {
                     "Type": "AWS::Events::Rule",
                     "Properties": {
-                      "ScheduleExpression": "cron(0 8 * * ? *)",
+                      "ScheduleExpression": "cron(15 5 * * ? *)",
                       "State": "ENABLED",
                       "Description": "Trigger generate today attempt",
                       "Targets": [
                         {
                           "Arn": {
                             "Fn::GetAtt": [
-                              "RateHandlerLambdaFunction",
+                              "GenerateHandlerLambdaFunction",
                               "Arn"
                             ]
                           },
-                          "Id": "rateHandlerSchedule"
+                          "Id": "generateHandlerSchedule"
                         }
                       ]
                     }
                   },
-                  "RateHandlerLambdaPermissionEventsRuleSchedule2": {
+                  "GenerateHandlerLambdaPermissionEventsRuleSchedule1": {
                     "Type": "AWS::Lambda::Permission",
                     "Properties": {
                       "FunctionName": {
                         "Fn::GetAtt": [
-                          "RateHandlerLambdaFunction",
+                          "GenerateHandlerLambdaFunction",
                           "Arn"
                         ]
                       },
@@ -211,7 +277,45 @@
                       "Principal": "events.amazonaws.com",
                       "SourceArn": {
                         "Fn::GetAtt": [
-                          "RateHandlerEventsRuleSchedule2",
+                          "GenerateHandlerEventsRuleSchedule1",
+                          "Arn"
+                        ]
+                      }
+                    }
+                  },
+                  "ReviewHandlerEventsRuleSchedule1": {
+                    "Type": "AWS::Events::Rule",
+                    "Properties": {
+                      "ScheduleExpression": "cron(0 17 * * ? *)",
+                      "State": "ENABLED",
+                      "Description": "Trigger review today attempt",
+                      "Targets": [
+                        {
+                          "Arn": {
+                            "Fn::GetAtt": [
+                              "ReviewHandlerLambdaFunction",
+                              "Arn"
+                            ]
+                          },
+                          "Id": "reviewHandlerSchedule"
+                        }
+                      ]
+                    }
+                  },
+                  "ReviewHandlerLambdaPermissionEventsRuleSchedule1": {
+                    "Type": "AWS::Lambda::Permission",
+                    "Properties": {
+                      "FunctionName": {
+                        "Fn::GetAtt": [
+                          "ReviewHandlerLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "Action": "lambda:InvokeFunction",
+                      "Principal": "events.amazonaws.com",
+                      "SourceArn": {
+                        "Fn::GetAtt": [
+                          "ReviewHandlerEventsRuleSchedule1",
                           "Arn"
                         ]
                       }
@@ -225,13 +329,43 @@
                       "Name": "sls-notion-service-dev-ServerlessDeploymentBucketName"
                     }
                   },
-                  "RateHandlerLambdaFunctionQualifiedArn": {
+                  "GenerateHandlerLambdaFunctionQualifiedArn": {
                     "Description": "Current Lambda function version",
                     "Value": {
-                      "Ref": "RateHandlerLambdaVersionVrNzsPW7pabnvMz0qRaB8UkiZ7VBAM46Gha7PGFL0A8"
+                      "Ref": "GenerateHandlerLambdaVersion9LjMlRM5K5B7sAhlu9eNsyEFs9XnySfhHhiRGeu0K4"
                     },
                     "Export": {
-                      "Name": "sls-notion-service-dev-RateHandlerLambdaFunctionQualifiedArn"
+                      "Name": "sls-notion-service-dev-GenerateHandlerLambdaFunctionQualifiedArn"
+                    }
+                  },
+                  "ReviewHandlerLambdaFunctionQualifiedArn": {
+                    "Description": "Current Lambda function version",
+                    "Value": {
+                      "Ref": "ReviewHandlerLambdaVersion90y9NIne9FRJjbPhoWyMcOIohWxXXtnzAow6Xu8A"
+                    },
+                    "Export": {
+                      "Name": "sls-notion-service-dev-ReviewHandlerLambdaFunctionQualifiedArn"
+                    }
+                  },
+                  "UrlHandlerLambdaFunctionQualifiedArn": {
+                    "Description": "Current Lambda function version",
+                    "Value": {
+                      "Ref": "UrlHandlerLambdaVersionvnUTQRzgVWqTE8FaCzJcLY3ZNhSMzM1k3lpVmrkdlo"
+                    },
+                    "Export": {
+                      "Name": "sls-notion-service-dev-UrlHandlerLambdaFunctionQualifiedArn"
+                    }
+                  },
+                  "UrlHandlerLambdaFunctionUrl": {
+                    "Description": "Lambda Function URL",
+                    "Value": {
+                      "Fn::GetAtt": [
+                        "UrlHandlerLambdaFunctionUrl",
+                        "FunctionUrl"
+                      ]
+                    },
+                    "Export": {
+                      "Name": "sls-notion-service-dev-UrlHandlerLambdaFunctionUrl"
                     }
                   }
                 }
@@ -239,33 +373,57 @@
               "vpc": {}
             },
             "functions": {
-              "rateHandler": {
-                "handler": "index.handler",
+              "generateHandler": {
+                "handler": "generateHandler.handler",
                 "events": [
                   {
                     "schedule": {
                       "rate": [
-                        "cron(0 0 * * ? *)"
-                      ],
-                      "description": "Trigger review today attempt"
-                    }
-                  },
-                  {
-                    "schedule": {
-                      "rate": [
-                        "cron(0 8 * * ? *)"
+                        "cron(15 5 * * ? *)"
                       ],
                       "description": "Trigger generate today attempt"
                     }
                   }
                 ],
-                "name": "notion-service-dev-rateHandler",
+                "name": "notion-service-dev-generateHandler",
                 "package": {},
                 "memory": 1024,
                 "timeout": 6,
                 "runtime": "nodejs20.x",
                 "vpc": {},
-                "versionLogicalId": "RateHandlerLambdaVersionVrNzsPW7pabnvMz0qRaB8UkiZ7VBAM46Gha7PGFL0A8"
+                "versionLogicalId": "GenerateHandlerLambdaVersion9LjMlRM5K5B7sAhlu9eNsyEFs9XnySfhHhiRGeu0K4"
+              },
+              "reviewHandler": {
+                "handler": "reviewHandler.handler",
+                "events": [
+                  {
+                    "schedule": {
+                      "rate": [
+                        "cron(0 17 * * ? *)"
+                      ],
+                      "description": "Trigger review today attempt"
+                    }
+                  }
+                ],
+                "name": "notion-service-dev-reviewHandler",
+                "package": {},
+                "memory": 1024,
+                "timeout": 6,
+                "runtime": "nodejs20.x",
+                "vpc": {},
+                "versionLogicalId": "ReviewHandlerLambdaVersion90y9NIne9FRJjbPhoWyMcOIohWxXXtnzAow6Xu8A"
+              },
+              "urlHandler": {
+                "handler": "urlHandler.handler",
+                "url": true,
+                "events": [],
+                "name": "notion-service-dev-urlHandler",
+                "package": {},
+                "memory": 1024,
+                "timeout": 6,
+                "runtime": "nodejs20.x",
+                "vpc": {},
+                "versionLogicalId": "UrlHandlerLambdaVersionvnUTQRzgVWqTE8FaCzJcLY3ZNhSMzM1k3lpVmrkdlo"
               }
             }
           },
@@ -314,10 +472,22 @@
           "AWSTemplateFormatVersion": "2010-09-09",
           "Description": "The AWS CloudFormation template for this Serverless application",
           "Resources": {
-            "RateHandlerLogGroup": {
+            "GenerateHandlerLogGroup": {
               "Type": "AWS::Logs::LogGroup",
               "Properties": {
-                "LogGroupName": "/aws/lambda/notion-service-dev-rateHandler"
+                "LogGroupName": "/aws/lambda/notion-service-dev-generateHandler"
+              }
+            },
+            "ReviewHandlerLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/notion-service-dev-reviewHandler"
+              }
+            },
+            "UrlHandlerLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/notion-service-dev-urlHandler"
               }
             },
             "IamRoleLambdaExecution": {
@@ -398,16 +568,16 @@
                 }
               }
             },
-            "RateHandlerLambdaFunction": {
+            "GenerateHandlerLambdaFunction": {
               "Type": "AWS::Lambda::Function",
               "Properties": {
                 "Code": {
                   "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
-                  "S3Key": "serverless/notion-service/dev/1733306639088-2024-12-04T10:03:59.088Z/notion-service.zip"
+                  "S3Key": "serverless/notion-service/dev/1734428234817-2024-12-17T09:37:14.817Z/notion-service.zip"
                 },
-                "Handler": "index.handler",
+                "Handler": "generateHandler.handler",
                 "Runtime": "nodejs20.x",
-                "FunctionName": "notion-service-dev-rateHandler",
+                "FunctionName": "notion-service-dev-generateHandler",
                 "MemorySize": 1024,
                 "Timeout": 6,
                 "Role": {
@@ -418,82 +588,136 @@
                 }
               },
               "DependsOn": [
-                "RateHandlerLogGroup"
+                "GenerateHandlerLogGroup"
               ]
             },
-            "RateHandlerLambdaVersionVrNzsPW7pabnvMz0qRaB8UkiZ7VBAM46Gha7PGFL0A8": {
+            "ReviewHandlerLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
+                  "S3Key": "serverless/notion-service/dev/1734428234817-2024-12-17T09:37:14.817Z/notion-service.zip"
+                },
+                "Handler": "reviewHandler.handler",
+                "Runtime": "nodejs20.x",
+                "FunctionName": "notion-service-dev-reviewHandler",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "ReviewHandlerLogGroup"
+              ]
+            },
+            "UrlHandlerLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
+                  "S3Key": "serverless/notion-service/dev/1734428234817-2024-12-17T09:37:14.817Z/notion-service.zip"
+                },
+                "Handler": "urlHandler.handler",
+                "Runtime": "nodejs20.x",
+                "FunctionName": "notion-service-dev-urlHandler",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "UrlHandlerLogGroup"
+              ]
+            },
+            "GenerateHandlerLambdaVersion9LjMlRM5K5B7sAhlu9eNsyEFs9XnySfhHhiRGeu0K4": {
               "Type": "AWS::Lambda::Version",
               "DeletionPolicy": "Retain",
               "Properties": {
                 "FunctionName": {
-                  "Ref": "RateHandlerLambdaFunction"
+                  "Ref": "GenerateHandlerLambdaFunction"
                 },
-                "CodeSha256": "CnAMYa382byIM8C2N7H21IpqCoiYmgs9wEHi2rFn7b0="
+                "CodeSha256": "qeOQa3lGi5Ctd1ayc9IBKoj/f7UiI6WQT1tWm3QgQSw="
               }
             },
-            "RateHandlerEventsRuleSchedule1": {
-              "Type": "AWS::Events::Rule",
-              "Properties": {
-                "ScheduleExpression": "cron(0 0 * * ? *)",
-                "State": "ENABLED",
-                "Description": "Trigger review today attempt",
-                "Targets": [
-                  {
-                    "Arn": {
-                      "Fn::GetAtt": [
-                        "RateHandlerLambdaFunction",
-                        "Arn"
-                      ]
-                    },
-                    "Id": "rateHandlerSchedule"
-                  }
-                ]
-              }
-            },
-            "RateHandlerLambdaPermissionEventsRuleSchedule1": {
-              "Type": "AWS::Lambda::Permission",
+            "ReviewHandlerLambdaVersion90y9NIne9FRJjbPhoWyMcOIohWxXXtnzAow6Xu8A": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
               "Properties": {
                 "FunctionName": {
-                  "Fn::GetAtt": [
-                    "RateHandlerLambdaFunction",
-                    "Arn"
-                  ]
+                  "Ref": "ReviewHandlerLambdaFunction"
                 },
-                "Action": "lambda:InvokeFunction",
-                "Principal": "events.amazonaws.com",
-                "SourceArn": {
+                "CodeSha256": "qeOQa3lGi5Ctd1ayc9IBKoj/f7UiI6WQT1tWm3QgQSw="
+              }
+            },
+            "UrlHandlerLambdaVersionvnUTQRzgVWqTE8FaCzJcLY3ZNhSMzM1k3lpVmrkdlo": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "UrlHandlerLambdaFunction"
+                },
+                "CodeSha256": "qeOQa3lGi5Ctd1ayc9IBKoj/f7UiI6WQT1tWm3QgQSw="
+              }
+            },
+            "UrlHandlerLambdaFunctionUrl": {
+              "Type": "AWS::Lambda::Url",
+              "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
                   "Fn::GetAtt": [
-                    "RateHandlerEventsRuleSchedule1",
+                    "UrlHandlerLambdaFunction",
                     "Arn"
                   ]
                 }
               }
             },
-            "RateHandlerEventsRuleSchedule2": {
+            "UrlHandlerLambdaPermissionFnUrl": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "UrlHandlerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunctionUrl",
+                "Principal": "*",
+                "FunctionUrlAuthType": "NONE"
+              }
+            },
+            "GenerateHandlerEventsRuleSchedule1": {
               "Type": "AWS::Events::Rule",
               "Properties": {
-                "ScheduleExpression": "cron(0 8 * * ? *)",
+                "ScheduleExpression": "cron(15 5 * * ? *)",
                 "State": "ENABLED",
                 "Description": "Trigger generate today attempt",
                 "Targets": [
                   {
                     "Arn": {
                       "Fn::GetAtt": [
-                        "RateHandlerLambdaFunction",
+                        "GenerateHandlerLambdaFunction",
                         "Arn"
                       ]
                     },
-                    "Id": "rateHandlerSchedule"
+                    "Id": "generateHandlerSchedule"
                   }
                 ]
               }
             },
-            "RateHandlerLambdaPermissionEventsRuleSchedule2": {
+            "GenerateHandlerLambdaPermissionEventsRuleSchedule1": {
               "Type": "AWS::Lambda::Permission",
               "Properties": {
                 "FunctionName": {
                   "Fn::GetAtt": [
-                    "RateHandlerLambdaFunction",
+                    "GenerateHandlerLambdaFunction",
                     "Arn"
                   ]
                 },
@@ -501,7 +725,45 @@
                 "Principal": "events.amazonaws.com",
                 "SourceArn": {
                   "Fn::GetAtt": [
-                    "RateHandlerEventsRuleSchedule2",
+                    "GenerateHandlerEventsRuleSchedule1",
+                    "Arn"
+                  ]
+                }
+              }
+            },
+            "ReviewHandlerEventsRuleSchedule1": {
+              "Type": "AWS::Events::Rule",
+              "Properties": {
+                "ScheduleExpression": "cron(0 17 * * ? *)",
+                "State": "ENABLED",
+                "Description": "Trigger review today attempt",
+                "Targets": [
+                  {
+                    "Arn": {
+                      "Fn::GetAtt": [
+                        "ReviewHandlerLambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "Id": "reviewHandlerSchedule"
+                  }
+                ]
+              }
+            },
+            "ReviewHandlerLambdaPermissionEventsRuleSchedule1": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "ReviewHandlerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "events.amazonaws.com",
+                "SourceArn": {
+                  "Fn::GetAtt": [
+                    "ReviewHandlerEventsRuleSchedule1",
                     "Arn"
                   ]
                 }
@@ -515,13 +777,43 @@
                 "Name": "sls-notion-service-dev-ServerlessDeploymentBucketName"
               }
             },
-            "RateHandlerLambdaFunctionQualifiedArn": {
+            "GenerateHandlerLambdaFunctionQualifiedArn": {
               "Description": "Current Lambda function version",
               "Value": {
-                "Ref": "RateHandlerLambdaVersionVrNzsPW7pabnvMz0qRaB8UkiZ7VBAM46Gha7PGFL0A8"
+                "Ref": "GenerateHandlerLambdaVersion9LjMlRM5K5B7sAhlu9eNsyEFs9XnySfhHhiRGeu0K4"
               },
               "Export": {
-                "Name": "sls-notion-service-dev-RateHandlerLambdaFunctionQualifiedArn"
+                "Name": "sls-notion-service-dev-GenerateHandlerLambdaFunctionQualifiedArn"
+              }
+            },
+            "ReviewHandlerLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "ReviewHandlerLambdaVersion90y9NIne9FRJjbPhoWyMcOIohWxXXtnzAow6Xu8A"
+              },
+              "Export": {
+                "Name": "sls-notion-service-dev-ReviewHandlerLambdaFunctionQualifiedArn"
+              }
+            },
+            "UrlHandlerLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "UrlHandlerLambdaVersionvnUTQRzgVWqTE8FaCzJcLY3ZNhSMzM1k3lpVmrkdlo"
+              },
+              "Export": {
+                "Name": "sls-notion-service-dev-UrlHandlerLambdaFunctionQualifiedArn"
+              }
+            },
+            "UrlHandlerLambdaFunctionUrl": {
+              "Description": "Lambda Function URL",
+              "Value": {
+                "Fn::GetAtt": [
+                  "UrlHandlerLambdaFunctionUrl",
+                  "FunctionUrl"
+                ]
+              },
+              "Export": {
+                "Name": "sls-notion-service-dev-UrlHandlerLambdaFunctionUrl"
               }
             }
           }
@@ -529,37 +821,61 @@
         "vpc": {}
       },
       "functions": {
-        "rateHandler": {
-          "handler": "index.handler",
+        "generateHandler": {
+          "handler": "generateHandler.handler",
           "events": [
             {
               "schedule": {
                 "rate": [
-                  "cron(0 0 * * ? *)"
-                ],
-                "description": "Trigger review today attempt"
-              }
-            },
-            {
-              "schedule": {
-                "rate": [
-                  "cron(0 8 * * ? *)"
+                  "cron(15 5 * * ? *)"
                 ],
                 "description": "Trigger generate today attempt"
               }
             }
           ],
-          "name": "notion-service-dev-rateHandler",
+          "name": "notion-service-dev-generateHandler",
           "package": {},
           "memory": 1024,
           "timeout": 6,
           "runtime": "nodejs20.x",
           "vpc": {},
-          "versionLogicalId": "RateHandlerLambdaVersionVrNzsPW7pabnvMz0qRaB8UkiZ7VBAM46Gha7PGFL0A8"
+          "versionLogicalId": "GenerateHandlerLambdaVersion9LjMlRM5K5B7sAhlu9eNsyEFs9XnySfhHhiRGeu0K4"
+        },
+        "reviewHandler": {
+          "handler": "reviewHandler.handler",
+          "events": [
+            {
+              "schedule": {
+                "rate": [
+                  "cron(0 17 * * ? *)"
+                ],
+                "description": "Trigger review today attempt"
+              }
+            }
+          ],
+          "name": "notion-service-dev-reviewHandler",
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "nodejs20.x",
+          "vpc": {},
+          "versionLogicalId": "ReviewHandlerLambdaVersion90y9NIne9FRJjbPhoWyMcOIohWxXXtnzAow6Xu8A"
+        },
+        "urlHandler": {
+          "handler": "urlHandler.handler",
+          "url": true,
+          "events": [],
+          "name": "notion-service-dev-urlHandler",
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "nodejs20.x",
+          "vpc": {},
+          "versionLogicalId": "UrlHandlerLambdaVersionvnUTQRzgVWqTE8FaCzJcLY3ZNhSMzM1k3lpVmrkdlo"
         }
       }
     },
-    "serviceRawFile": "# \"org\" ensures this Service is used with the correct Serverless Framework Access Key.\norg: gootube\n# \"app\" enables Serverless Framework Dashboard features and sharing them with other Services.\napp: gootube\n# \"service\" is the name of this project. This will also be added to your AWS resource names.\nservice: notion-service\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: ap-southeast-1\n\nfunctions:\n  rateHandler:\n    handler: index.handler\n    events:\n      - schedule:\n          rate: cron(0 0 * * ? *)   #Trigger every day at 00:00 UTC\n          description: Trigger review today attempt\n      - schedule:\n          rate: cron(0 8 * * ? *)   #Trigger every day at 08:00 UTC\n          description: Trigger generate today attempt\n",
+    "serviceRawFile": "# \"org\" ensures this Service is used with the correct Serverless Framework Access Key.\r\norg: gootube\r\n# \"app\" enables Serverless Framework Dashboard features and sharing them with other Services.\r\napp: gootube\r\n# \"service\" is the name of this project. This will also be added to your AWS resource names.\r\nservice: notion-service\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: nodejs20.x\r\n  region: ap-southeast-1\r\n\r\nfunctions:\r\n  generateHandler:\r\n    handler: generateHandler.handler\r\n    events:\r\n      - schedule:\r\n          rate: cron(15 5 * * ? *)   #Trigger every day at 01:00 UTC - 08:00 GMT+7\r\n          description: Trigger generate today attempt\r\n\r\n  reviewHandler:\r\n    handler: reviewHandler.handler\r\n    events:\r\n      - schedule:\r\n          rate: cron(0 17 * * ? *)  #Trigger every day at 17:00 UTC - 00:00 GMT+7\r\n          description: Trigger review today attempt\r\n\r\n  urlHandler:\r\n    handler: urlHandler.handler\r\n    url: true\r\n",
     "command": [
       "deploy"
     ],
@@ -599,20 +915,38 @@
     "serviceProviderAwsCredentials": "<REDACTED>",
     "serviceProviderAwsAccountId": "467614041356",
     "projectType": "traditional",
-    "versionSf": "4.4.14",
+    "versionSf": "4.4.16",
     "serviceProviderAwsCfStackName": "notion-service-dev",
     "integrations": {},
     "serviceUniqueId": "arn:aws:cloudformation:ap-southeast-1:467614041356:stack/notion-service-dev/8e0ed5a0-b21c-11ef-9822-02ec09f151a9",
     "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-southeast-1:467614041356:stack/notion-service-dev/8e0ed5a0-b21c-11ef-9822-02ec09f151a9",
     "serviceProviderAwsCfStackCreated": "2024-12-04T08:48:39.271Z",
-    "serviceProviderAwsCfStackUpdated": "2024-12-04T10:04:12.242Z",
+    "serviceProviderAwsCfStackUpdated": "2024-12-17T09:37:28.997Z",
     "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
     "serviceProviderAwsCfStackOutputs": [
       {
-        "OutputKey": "RateHandlerLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-southeast-1:467614041356:function:notion-service-dev-rateHandler:4",
+        "OutputKey": "ReviewHandlerLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-southeast-1:467614041356:function:notion-service-dev-reviewHandler:4",
         "Description": "Current Lambda function version",
-        "ExportName": "sls-notion-service-dev-RateHandlerLambdaFunctionQualifiedArn"
+        "ExportName": "sls-notion-service-dev-ReviewHandlerLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "UrlHandlerLambdaFunctionUrl",
+        "OutputValue": "https://2bceh23pck5zovrildrpothq4q0kqfst.lambda-url.ap-southeast-1.on.aws/",
+        "Description": "Lambda Function URL",
+        "ExportName": "sls-notion-service-dev-UrlHandlerLambdaFunctionUrl"
+      },
+      {
+        "OutputKey": "GenerateHandlerLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-southeast-1:467614041356:function:notion-service-dev-generateHandler:4",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-notion-service-dev-GenerateHandlerLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "UrlHandlerLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-southeast-1:467614041356:function:notion-service-dev-urlHandler:5",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-notion-service-dev-UrlHandlerLambdaFunctionQualifiedArn"
       },
       {
         "OutputKey": "ServerlessDeploymentBucketName",
