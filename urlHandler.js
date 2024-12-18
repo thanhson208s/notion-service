@@ -4,7 +4,8 @@ import fs from 'fs'
 import path from 'path'
 
 // Load environment variables
-dotenv.config();
+if (process.env.NODE_ENV !== 'production')
+    dotenv.config();
 
 // Send Telegram alert
 const sendTelegramMessage = async(message) => {
@@ -19,35 +20,11 @@ const sendTelegramMessage = async(message) => {
 export const handler = async(event) => {
     console.log("New client request:", event);
 
-    // try {
-    //     const clientIP = event.headers?.['x-forwarded-for'] ?? "Unknown IP";
-    //     const clientPort = event.headers?.['x-forwarded-port'] ?? "Unknown port";
-    //     console.log(`Extracted client info: ${clientIP}:${clientPort}`);
-    //     sendTelegramMessage(`Extracted client info: ${clientIP}:${clientPort}`);
-
-    //     const response = {
-    //         statusCode: 200,
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //         },
-    //         body: `${clientIP}:${clientPort}`
-    //     };
-
-    //     return response;
-    // } catch(error) {
-    //     console.error("Error extracting client information:", error);
-    //     sendTelegramMessage("Error extracting client information");
-
-    //     return {
-    //         statusCode: 500,
-    //         body: JSON.stringify({
-    //             message: "Error extracting client information",
-    //             error: error.message
-    //         })
-    //     };
-    // }
-
     try {
+        const clientIP = event.headers?.['x-forwarded-for'] ?? "Unknown IP";
+        const clientPort = event.headers?.['x-forwarded-port'] ?? "Unknown port";
+        sendTelegramMessage(`New request from: ${clientIP}:${clientPort}`);
+
         const htmlContent = fs.readFileSync(path.resolve(process.cwd(), 'static/index.html'), 'utf-8');
         const cssContent = fs.readFileSync(path.resolve(process.cwd(), 'static/index.css'), 'utf-8');
         const fullHtml = htmlContent.replace('<style></style>', `<style>${cssContent}</style>`);

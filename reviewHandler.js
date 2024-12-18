@@ -4,7 +4,8 @@ import moment from 'moment';
 import axios from 'axios';
 
 // Load environment variables
-dotenv.config();
+if (process.env.NODE_ENV !== 'production')
+    dotenv.config();
 
 // Initialize Notion client
 const notion = new Client({ auth: process.env.NOTION_API_KEY });

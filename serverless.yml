@@ -9,6 +9,17 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: ap-southeast-1
+  environment:
+    NOTION_API_KEY: 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
+    NOTION_WORD_LIST_DATABASE_ID: 150c3752e48a803e8593c48e9593332e
+    NOTION_ATTEMPTS_DATABASE_ID: 150c3752e48a80768126d6eac82027f7
+    TELEGRAM_URL: https://api.telegram.org/bot7014099402:AAG15B_W2pW6k2gFRWZ_BJHSSdgJMpsSfRg/sendMessage?chat_id=-1002322494245&text={{message}}&message_thread_id=6
+    NODE_ENV: production
+
+package:
+  patterns:
+    - '!.env'
+    - '!README.md'
 
 functions:
   generateHandler:
@@ -18,11 +29,6 @@ functions:
           rate: cron(0 1 * * ? *)   #Trigger every day at 01:00 UTC - 08:00 GMT+7
           description: Trigger generate today attempt
     timeout: 900
-    package:
-      patterns:
-        - '!.static/**'
-        - '!.reviewHandler.js'
-        - '!.urlHandler.js'
 
   reviewHandler:
     handler: reviewHandler.handler
@@ -31,17 +37,8 @@ functions:
           rate: cron(0 17 * * ? *)  #Trigger every day at 17:00 UTC - 00:00 GMT+7
           description: Trigger review today attempt
     timeout: 900
-    package:
-      patterns:
-        - '!.static/**'
-        - '!.generateHandler.js'
-        - '!.urlHandler.js'
 
   urlHandler:
     handler: urlHandler.handler
     url: true
     timeout: 60
-    package:
-      patterns:
-        - '!.generateHandler.js'
-        - '!.reviewHandler.js'
