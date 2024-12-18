@@ -103,13 +103,13 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
-          "S3Key": "serverless/notion-service/dev/1734428234817-2024-12-17T09:37:14.817Z/notion-service.zip"
+          "S3Key": "serverless/notion-service/dev/1734492536979-2024-12-18T03:28:56.979Z/notion-service.zip"
         },
         "Handler": "generateHandler.handler",
         "Runtime": "nodejs20.x",
         "FunctionName": "notion-service-dev-generateHandler",
         "MemorySize": 1024,
-        "Timeout": 6,
+        "Timeout": 900,
         "Role": {
           "Fn::GetAtt": [
             "IamRoleLambdaExecution",
@@ -126,13 +126,13 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
-          "S3Key": "serverless/notion-service/dev/1734428234817-2024-12-17T09:37:14.817Z/notion-service.zip"
+          "S3Key": "serverless/notion-service/dev/1734492536979-2024-12-18T03:28:56.979Z/notion-service.zip"
         },
         "Handler": "reviewHandler.handler",
         "Runtime": "nodejs20.x",
         "FunctionName": "notion-service-dev-reviewHandler",
         "MemorySize": 1024,
-        "Timeout": 6,
+        "Timeout": 900,
         "Role": {
           "Fn::GetAtt": [
             "IamRoleLambdaExecution",
@@ -149,13 +149,13 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
-          "S3Key": "serverless/notion-service/dev/1734428234817-2024-12-17T09:37:14.817Z/notion-service.zip"
+          "S3Key": "serverless/notion-service/dev/1734492536979-2024-12-18T03:28:56.979Z/notion-service.zip"
         },
         "Handler": "urlHandler.handler",
         "Runtime": "nodejs20.x",
         "FunctionName": "notion-service-dev-urlHandler",
         "MemorySize": 1024,
-        "Timeout": 6,
+        "Timeout": 60,
         "Role": {
           "Fn::GetAtt": [
             "IamRoleLambdaExecution",
@@ -167,34 +167,34 @@
         "UrlHandlerLogGroup"
       ]
     },
-    "GenerateHandlerLambdaVersion9LjMlRM5K5B7sAhlu9eNsyEFs9XnySfhHhiRGeu0K4": {
+    "GenerateHandlerLambdaVersionb49mbW3AtUiPyjBFz0q5mR3AxzxAJ8v1tlLRiwKw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GenerateHandlerLambdaFunction"
         },
-        "CodeSha256": "qeOQa3lGi5Ctd1ayc9IBKoj/f7UiI6WQT1tWm3QgQSw="
+        "CodeSha256": "Xkr70CTMYmU7kU03oHklZhbl8euEVu9FsGLTX/kY3/8="
       }
     },
-    "ReviewHandlerLambdaVersion90y9NIne9FRJjbPhoWyMcOIohWxXXtnzAow6Xu8A": {
+    "ReviewHandlerLambdaVersionHN4I6NW1iIeTAbZTnIPWshuCnFmaDTt59k7NgZw5F4": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ReviewHandlerLambdaFunction"
         },
-        "CodeSha256": "qeOQa3lGi5Ctd1ayc9IBKoj/f7UiI6WQT1tWm3QgQSw="
+        "CodeSha256": "Xkr70CTMYmU7kU03oHklZhbl8euEVu9FsGLTX/kY3/8="
       }
     },
-    "UrlHandlerLambdaVersionvnUTQRzgVWqTE8FaCzJcLY3ZNhSMzM1k3lpVmrkdlo": {
+    "UrlHandlerLambdaVersionS8IEnh9kzSci3LRe3uUFpTeoaev5Va7pRbzezKZ2kCA": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "UrlHandlerLambdaFunction"
         },
-        "CodeSha256": "qeOQa3lGi5Ctd1ayc9IBKoj/f7UiI6WQT1tWm3QgQSw="
+        "CodeSha256": "Xkr70CTMYmU7kU03oHklZhbl8euEVu9FsGLTX/kY3/8="
       }
     },
     "UrlHandlerLambdaFunctionUrl": {
@@ -226,7 +226,7 @@
     "GenerateHandlerEventsRuleSchedule1": {
       "Type": "AWS::Events::Rule",
       "Properties": {
-        "ScheduleExpression": "cron(15 5 * * ? *)",
+        "ScheduleExpression": "cron(0 1 * * ? *)",
         "State": "ENABLED",
         "Description": "Trigger generate today attempt",
         "Targets": [
@@ -310,7 +310,7 @@
     "GenerateHandlerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GenerateHandlerLambdaVersion9LjMlRM5K5B7sAhlu9eNsyEFs9XnySfhHhiRGeu0K4"
+        "Ref": "GenerateHandlerLambdaVersionb49mbW3AtUiPyjBFz0q5mR3AxzxAJ8v1tlLRiwKw"
       },
       "Export": {
         "Name": "sls-notion-service-dev-GenerateHandlerLambdaFunctionQualifiedArn"
@@ -319,7 +319,7 @@
     "ReviewHandlerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ReviewHandlerLambdaVersion90y9NIne9FRJjbPhoWyMcOIohWxXXtnzAow6Xu8A"
+        "Ref": "ReviewHandlerLambdaVersionHN4I6NW1iIeTAbZTnIPWshuCnFmaDTt59k7NgZw5F4"
       },
       "Export": {
         "Name": "sls-notion-service-dev-ReviewHandlerLambdaFunctionQualifiedArn"
@@ -328,7 +328,7 @@
     "UrlHandlerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "UrlHandlerLambdaVersionvnUTQRzgVWqTE8FaCzJcLY3ZNhSMzM1k3lpVmrkdlo"
+        "Ref": "UrlHandlerLambdaVersionS8IEnh9kzSci3LRe3uUFpTeoaev5Va7pRbzezKZ2kCA"
       },
       "Export": {
         "Name": "sls-notion-service-dev-UrlHandlerLambdaFunctionQualifiedArn"
