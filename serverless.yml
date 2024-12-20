@@ -40,5 +40,6 @@ functions:
 
   urlHandler:
     handler: urlHandler.handler
-    url: true
+    url:
+      authorizer: aws_iam
     timeout: 60
