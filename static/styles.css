@@ -1,0 +1,134 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: transparent;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+form {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 2rem;  
+    margin-bottom: 10px;
+    text-align: center;
+    background: linear-gradient(90deg, #3bf3f3, #1473d3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+label {
+    display: block;
+    margin: 5px 0 10px;
+    color: #a4d2ff;
+    font-size: 0.8rem;
+}
+
+label span {
+    color: red;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid rgb(151, 151, 151);
+    border-radius: 6px;
+    box-sizing: border-box;
+    background-color: #2c2c2c;
+    color: white;
+    font-size: 1rem;
+}
+
+textarea {
+    resize: none;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    gap: 20px;
+}
+
+button {
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+}
+
+#add-button {
+    background-color: #239114;
+}
+
+#add-button:hover {
+    background-color: #42b35b;
+}
+
+#draft-button {
+    background-color: rgb(88, 88, 88);
+}
+
+#draft-button:hover {
+    background-color: gray;
+}
+
+#toast {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(255, 255, 255);
+    padding: 10px 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-width: 250px;
+    z-index: 1000;
+    opacity: 0;
+    transition: top 0.3s ease, opacity 0.3s ease;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+#toast.success {
+    border: 3px solid rgb(38, 180, 38);
+    color: rgb(38, 180, 38);
+}
+
+#toast.error {
+    border: 3px solid red;
+    color: red;
+}
+
+#toast.show {
+    top: 10px;
+    opacity: 1;
+}
+
+#progress-bar-container {
+    height: 4px;
+    background-color: #eee;
+    margin-top: 10px;
+    border-radius: 2px;
+}
+
+#process-bar {
+    height: 100%;
+    background-color: #4caf50;
+    width: 100%;
+    border-radius: 2px;
+}

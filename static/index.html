@@ -1,12 +1,40 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>GOOTUBE</title>
-        <style></style>
-    </head>
-    <body>
-        <h1>GOOTUBE</h1>
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notion Form</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <style></style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Add a new word</h1>
+        <form id="notionForm">
+            <label for="name"><b>Name</b> <span>*</span></label>
+            <input type="text" id="name" name="name">
+
+            <label for="ipa"><b>IPA</b> <span>*</span></label>
+            <input type="text" id="ipa" name="ipa">
+
+            <label for="meaning"><b>Meaning</b> <span>*</span></label>
+            <textarea id="meaning" name="meaning" rows="3"></textarea>
+
+            <label for="examples"><b>Examples</b> <span>*</span></label>
+            <textarea id="examples" name="examples" rows="3"></textarea>
+            
+            <div class="buttons-container">
+                <button type="button" onclick="showToast(true)" id="add-button">Add</button>
+                <button type="button" onclick="showToast(false)" id="draft-button">Save as draft</button>
+            </div>
+            
+        </form>
+    </div>
+
+    <div id="toast">
+        <div id="toast-message">This is a toast message</div>
+    </div>
+    <!-- <script src="script.js"></script> -->
+    <script></script>
+</body>
 </html>

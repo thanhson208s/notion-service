@@ -21,13 +21,12 @@ export const handler = async(event) => {
     console.log("New client request:", event);
 
     try {
-        const clientIP = event.headers?.['x-forwarded-for'] ?? "Unknown IP";
-        const clientPort = event.headers?.['x-forwarded-port'] ?? "Unknown port";
-        sendTelegramMessage(`New request from: ${clientIP}:${clientPort}`);
-
         const htmlContent = fs.readFileSync(path.resolve(process.cwd(), 'static/index.html'), 'utf-8');
-        const cssContent = fs.readFileSync(path.resolve(process.cwd(), 'static/index.css'), 'utf-8');
-        const fullHtml = htmlContent.replace('<style></style>', `<style>${cssContent}</style>`);
+        const cssContent = fs.readFileSync(path.resolve(process.cwd(), 'static/styles.css'), 'utf-8');
+        const jsContent = fs.readFileSync(path.resolve(process.cwd(), 'static/script.js'), 'utf-8');
+        const fullHtml = htmlContent
+            .replace('<style></style>', `<style>${cssContent}</style>`)
+            .replace('<script></script>', `<script>${jsContent}</script>`);
 
         return {
             statusCode: 200,
@@ -38,7 +37,7 @@ export const handler = async(event) => {
             body: fullHtml
         };
     } catch(error) {
-        console.error("Error serving HTML or CSS:", error);
+        console.error("Error serving files:", error);
         return {
             statusCode: 500,
             body: error.message
