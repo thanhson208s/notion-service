@@ -12,50 +12,51 @@ async function submitForm(isDraft) {
         isDraft
     };
 
+    const rawBytes = new TextEncoder().encode(JSON.stringify(formData));
+    const hashedArray = await crypto.subtle.digest('SHA-256', rawBytes);
+    const hashedBytes = Array.from(new Uint8Array(hashedArray));
+    const hashedStr = hashedBytes.map(unit => unit.toString(16).padStart(2, "0")).join("");
+
     try {
-        const response = await fetch("", {
+        const response = await fetch("/", {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-amz-content-sha256': hashedStr
             },
             body: JSON.stringify(formData)
         });
+
+        const data = await response.json();
+        showToast(response.ok, data.description);
+        if (response.ok) {
+            document.getElementById('name').value = "";
+            document.getElementById('ipa').value = "";
+            document.getElementById('meaning').value = "";
+            document.getElementById('examples').value = "";
+        }
+        else throw new Error(data.message);
     } catch (error) {
-        
+        console.log("Error:", error);
     }
-
-    // try {
-    //     const response = await fetch('https://your-server-domain.com/submit', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(formData)
-    //     });
-
-    //     const result = await response.json();
-    //     showToast(result.ok ? 'Submission successful!' : `Error: ${result.reason}`);
-    // } catch (error) {
-    //     showToast('Submission failed! Please try again.');
-    // }
 }
 
-function showToast(success) {
+function showToast(success, message) {
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toast-message');
 
     if (success) {
         toast.classList.add('success');
         toast.classList.remove('error');
-        toastMessage.textContent = 'New word added!';
+        toastMessage.textContent = message;
     } else {
         toast.classList.add('error');
         toast.classList.remove('success');
-        toastMessage.textContent = 'Error adding new word!';;
+        toastMessage.textContent = message;
     }
 
     toast.classList.add('show');
     setTimeout(() => {
         toast.classList.remove('show');
-    }, 3000);
+    }, 2500);
 }
