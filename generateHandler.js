@@ -15,6 +15,8 @@ const todayDate = moment().format('YYYY-MM-DD');
 
 // Send Telegram alert
 const sendTelegramMessage = async(message) => {
+    if (process.env.NODE_ENV !== 'production') return;
+
     try {
         const url = process.env.TELEGRAM_URL.replace("{{message}}", encodeURIComponent(message));
         await axios.get(url);
@@ -33,14 +35,18 @@ const getTodayWordList = async() => {
                 and: [
                     {
                         property: 'Next reviewed date',
-                        date: {
-                            equals: todayDate
+                        formula: {
+                            date: {
+                                equals: todayDate
+                            }
                         }
                     },
                     {
                         property: 'Completed',
-                        checkbox: {
-                            equals: false
+                        formula: {
+                            checkbox: {
+                                equals: false
+                            }
                         }
                     },
                     {
@@ -73,7 +79,7 @@ const createTodayAttempt = async(results) => {
                 database_id: process.env.NOTION_ATTEMPTS_DATABASE_ID
             },
             properties: {
-                "Date": {
+                "Name": {
                     "type": "title",
                     "title": [
                         {
@@ -83,17 +89,11 @@ const createTodayAttempt = async(results) => {
                         }
                     ]
                 },
-                "Count": {
-                    "type": "number",
-                    "number": results.length
-                },
-                "Reviewed": {
-                    "type": "checkbox",
-                    "checkbox": false
-                },
-                "Grade": {
-                    "type": "number",
-                    "number": 0
+                "Date": {
+                    "type": "date",
+                    "date": {
+                        start: todayDate
+                    }
                 }
             }
         });
@@ -103,122 +103,60 @@ const createTodayAttempt = async(results) => {
             throw new Error("Create page failed!", {cause: responsePage});
         }
 
-        //create list row data for the table in the newly created page
-        const wordTasks = results.map((page) => ({
-            object: "block",
-            type: "table_row",
-            table_row: {
-                cells: [
-                    [
-                        {
-                            type: "mention",
-                            mention: {
-                                type: "page",
-                                page: {
-                                    id: page.id
+        //create a practice for each word
+        await Promise.all(
+            results.map(async(page) => {
+                //send page creation request
+                const responsePractice = await notion.pages.create({
+                    parent: {
+                        database_id: process.env.NOTION_PRACTICE_LIST_DATABASE_ID
+                    },
+                    properties: {
+                        "Name": {
+                            "type": "title",
+                            "title": [
+                                {
+                                    "text": {
+                                        "content": page.properties["Word"].title[0].text.content + " | " + todayDate
+                                    }
                                 }
-                            },
-                            href: page.url
-                        }
-                    ],
-                    [
-                        {
-                            type: "text",
-                            text: {
-                                content: page.properties["Level"]?.number?.toString() || "N/A"
-                            }
-                        }
-                    ],
-                    [
-                        {
-                            type: "text",
-                            text: {
-                                content: "" //leave blank to input pronunciation
-                            }
-                        }
-                    ],
-                    [
-                        {
-                            type: "text",
-                            text: {
-                                content: "" //leave blank to input meaning
-                            }
-                        }
-                    ],
-                    [
-                        {
-                            type: "text",
-                            text: {
-                                content: "" //leave blank to input examples
-                            }
-                        }
-                    ],
-                    [
-                        {
-                            type: "text",
-                            text: {
-                                content: "Correct/Wrong" //choose either of 2 outcomes, but not both
-                            }
-                        }
-                    ]
-                ]
-            }
-        }));
-
-        //add a table block to content of the newly created page
-        const responseTable = await notion.blocks.children.append({
-            block_id: responsePage.id,
-            children: [
-                {
-                    object: "block",
-                    type: "table",
-                    table: {
-                        table_width: 6,
-                        has_column_header: true,
-                        has_row_header: false,
-                        children: [
-                            {
-                                object: "block",
-                                type: "table_row",
-                                table_row: {
-                                    cells: [
-                                        [{ type: 'text', text: { content: 'Word' } }],
-                                        [{ type: 'text', text: { content: 'Level' } }],
-                                        [{ type: 'text', text: { content: 'Pronunciation' } }],
-                                        [{ type: 'text', text: { content: 'Meaning' } }],
-                                        [{ type: 'text', text: { content: 'Examples' } }],
-                                        [{ type: 'text', text: { content: 'Result' } }]
-                                    ]
+                            ]
+                        },
+                        "Word": {
+                            "type": "relation",
+                            "relation": [
+                                {
+                                    "id": page.id
                                 }
-                            }, ...wordTasks
-                        ]
+                            ]
+                        },
+                        "Attempt": {
+                            "type": "relation",
+                            "relation": [
+                                {
+                                    "id": responsePage.id
+                                }
+                            ]
+                        },
+                        "Level": {
+                            "type": "number",
+                            "number": page.properties["Level"].formula.number
+                        },
+                        "Date": {
+                            "type": "date",
+                            "date": {
+                                start: todayDate
+                            }
+                        }
                     }
+                });
+
+                //check for valid response
+                if (!responsePractice.object || responsePractice.object !== "page") {
+                    throw new Error("Create practice failed!", {cause: responsePractice});
                 }
-            ]
-        });
-
-        if (!responseTable.object || responseTable.object !== "list") {
-            throw new Error("Create table failed!", {cause: responseTable});
-        }
-
-        //add guildline comment to the newly created page
-        const responseComment = await notion.comments.create({
-            parent: {
-                page_id: responsePage.id
-            },
-            rich_text: [
-                {
-                    type: "text",
-                    text: {
-                        content: "Choose either of 2 results, but not both.\nMeaning and Examples must not be left blank."
-                    } 
-                }
-            ]
-        });
-
-        if (!responseComment.object || responseComment.object !== "comment") {
-            throw new Error("Create comment failed!", {cause: responseComment});
-        }
+            })
+        );
     } catch (error) {
         throw new Error("Error while create today's attempt page", {cause: error});
     }
@@ -226,8 +164,6 @@ const createTodayAttempt = async(results) => {
 
 // Handler for generate task
 export const handler = async (event) => {
-    console.log(`Generating task triggered at: ${event.time}`);
-
     try {
         await sendTelegramMessage("Start generate today's attempt");
         console.log("Start generate today's attempt");

@@ -152,15 +152,11 @@ registerController("POST", "/", async (event) => {
                         }
                     ]
                 },
-                "Last reviewed": {
+                "Published date": {
                     type: "date",
                     date: {
                         start: moment().format('YYYY-MM-DD')
                     }
-                },
-                "Completed": {
-                    type: "checkbox",
-                    checkbox: false,
                 },
                 "Draft": {
                     type: "checkbox",
