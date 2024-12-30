@@ -3,7 +3,7 @@ import axios from 'axios';
 import fs from 'fs'
 import path from 'path'
 import crypto from 'crypto'
-import moment from 'moment'
+import moment from 'moment-timezone'
 import { Client } from '@notionhq/client'
 
 // Load environment variables
@@ -165,7 +165,7 @@ registerController("POST", "/form", async (event) => {
                 "Published date": {
                     type: "date",
                     date: {
-                        start: moment().format('YYYY-MM-DD')
+                        start: moment().tz('Asia/Bangkok').format('YYYY-MM-DD')
                     }
                 },
                 "Draft": {
@@ -205,7 +205,7 @@ registerController("GET", "/routine", async(event) => {
         filter: {
             property: 'Reminder',
             date: {
-                on_or_after: moment().format('YYYY-MM-DD')
+                on_or_after: moment().tz('Asia/Bangkok').format('YYYY-MM-DD')
             }
         }
     });

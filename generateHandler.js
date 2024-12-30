@@ -1,6 +1,6 @@
 import { Client } from '@notionhq/client';
 import dotenv from 'dotenv';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import axios from 'axios';
 
 // Load environment variables
@@ -11,7 +11,7 @@ if (process.env.NODE_ENV !== 'production')
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 
 // Test start from here
-const todayDate = moment().format('YYYY-MM-DD');
+const todayDate = moment().tz('Asia/Bangkok').format('YYYY-MM-DD');
 
 // Send Telegram alert
 const sendTelegramMessage = async(message) => {

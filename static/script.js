@@ -18,7 +18,7 @@ async function submitForm(isDraft) {
     const hashedStr = hashedBytes.map(unit => unit.toString(16).padStart(2, "0")).join("");
 
     try {
-        const response = await fetch("/", {
+        const response = await fetch("/form", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

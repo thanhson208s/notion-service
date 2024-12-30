@@ -1,6 +1,6 @@
 import { Client } from '@notionhq/client';
 import dotenv from 'dotenv';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import axios from 'axios';
 
 // Load environment variables
@@ -11,7 +11,7 @@ if (process.env.NODE_ENV !== 'production')
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 
 // Test start from here
-const todayDate = moment().format('YYYY-MM-DD');
+const todayDate = moment().tz('Asia/Bangkok').format('YYYY-MM-DD');
 
 // Send Telegram alert
 const sendTelegramMessage = async(message) => {
@@ -59,7 +59,7 @@ const getDueRoutines = async() => {
             const lastDueDayOfWeek = moment(lastDueDate).format('ddd').toUpperCase();
             const nextDueDayOfWeek = daysOfWeek[(daysOfWeek.indexOf(lastDueDayOfWeek) + frequency) % daysOfWeek.length];
 
-            return nextDueDayOfWeek === moment().format('ddd').toUpperCase();
+            return nextDueDayOfWeek === moment().tz('Asia/Bangkok').format('ddd').toUpperCase();
         });
     } catch(error) {
         throw new Error("Error getting due routines", {cause: error});
@@ -82,7 +82,7 @@ const createTodayReport = async() => {
                     title: [
                         {
                             text: {
-                                content: `${moment().format('YYYY-MM-DD')} report`
+                                content: `${todayDate} report`
                             }
                         }
                     ]

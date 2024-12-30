@@ -126,7 +126,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
-                "S3Key": "serverless/notion-service/dev/1735523887704-2024-12-30T01:58:07.704Z/notion-service.zip"
+                "S3Key": "serverless/notion-service/dev/1735584708876-2024-12-30T18:51:48.876Z/notion-service.zip"
               },
               "Handler": "generateHandler.handler",
               "Runtime": "nodejs20.x",
@@ -162,7 +162,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
-                "S3Key": "serverless/notion-service/dev/1735523887704-2024-12-30T01:58:07.704Z/notion-service.zip"
+                "S3Key": "serverless/notion-service/dev/1735584708876-2024-12-30T18:51:48.876Z/notion-service.zip"
               },
               "Handler": "routineHandler.handler",
               "Runtime": "nodejs20.x",
@@ -198,7 +198,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
-                "S3Key": "serverless/notion-service/dev/1735523887704-2024-12-30T01:58:07.704Z/notion-service.zip"
+                "S3Key": "serverless/notion-service/dev/1735584708876-2024-12-30T18:51:48.876Z/notion-service.zip"
               },
               "Handler": "urlHandler.handler",
               "Runtime": "nodejs20.x",
@@ -229,34 +229,34 @@
               "UrlHandlerLogGroup"
             ]
           },
-          "GenerateHandlerLambdaVersionmPUza8g0ViceFl01vkYDRl7k9sEpVWmtkeEHnHoBdM": {
+          "GenerateHandlerLambdaVersionTqH6xNN4We0YWZJ342lkhY3jgIMWY3stO7D8BjlLTig": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GenerateHandlerLambdaFunction"
               },
-              "CodeSha256": "eoacsb+TkxOPA8nuvj0GtEChTUiTSWmV/oSc+LxxSY4="
+              "CodeSha256": "C1MZQ+PT5kj8AMxBQ/kIOUo+vl+Ek1UE0Uthv+onVDc="
             }
           },
-          "RoutineHandlerLambdaVersionlFByjWJcdrDuZ4S242HFfSZdrLKQUTZMZ3wavYOjof4": {
+          "RoutineHandlerLambdaVersionMY2auunwYFT7k7S6JdJ5uUEGZko7oqikEKojDVm7KYQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "RoutineHandlerLambdaFunction"
               },
-              "CodeSha256": "eoacsb+TkxOPA8nuvj0GtEChTUiTSWmV/oSc+LxxSY4="
+              "CodeSha256": "C1MZQ+PT5kj8AMxBQ/kIOUo+vl+Ek1UE0Uthv+onVDc="
             }
           },
-          "UrlHandlerLambdaVersionZYyN5ONY3cXdtoC4LWBRladSWugbTzNGF55KpmqjM": {
+          "UrlHandlerLambdaVersionhzc07lU1yhSiKun1IdTJe0m6RcASAMF3LNVL5nVF0": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "UrlHandlerLambdaFunction"
               },
-              "CodeSha256": "eoacsb+TkxOPA8nuvj0GtEChTUiTSWmV/oSc+LxxSY4="
+              "CodeSha256": "C1MZQ+PT5kj8AMxBQ/kIOUo+vl+Ek1UE0Uthv+onVDc="
             }
           },
           "UrlHandlerLambdaFunctionUrl": {
@@ -358,7 +358,7 @@
           "GenerateHandlerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GenerateHandlerLambdaVersionmPUza8g0ViceFl01vkYDRl7k9sEpVWmtkeEHnHoBdM"
+              "Ref": "GenerateHandlerLambdaVersionTqH6xNN4We0YWZJ342lkhY3jgIMWY3stO7D8BjlLTig"
             },
             "Export": {
               "Name": "sls-notion-service-dev-GenerateHandlerLambdaFunctionQualifiedArn"
@@ -367,7 +367,7 @@
           "RoutineHandlerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "RoutineHandlerLambdaVersionlFByjWJcdrDuZ4S242HFfSZdrLKQUTZMZ3wavYOjof4"
+              "Ref": "RoutineHandlerLambdaVersionMY2auunwYFT7k7S6JdJ5uUEGZko7oqikEKojDVm7KYQ"
             },
             "Export": {
               "Name": "sls-notion-service-dev-RoutineHandlerLambdaFunctionQualifiedArn"
@@ -376,7 +376,7 @@
           "UrlHandlerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "UrlHandlerLambdaVersionZYyN5ONY3cXdtoC4LWBRladSWugbTzNGF55KpmqjM"
+              "Ref": "UrlHandlerLambdaVersionhzc07lU1yhSiKun1IdTJe0m6RcASAMF3LNVL5nVF0"
             },
             "Export": {
               "Name": "sls-notion-service-dev-UrlHandlerLambdaFunctionQualifiedArn"
@@ -418,7 +418,7 @@
         "memory": 1024,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "GenerateHandlerLambdaVersionmPUza8g0ViceFl01vkYDRl7k9sEpVWmtkeEHnHoBdM"
+        "versionLogicalId": "GenerateHandlerLambdaVersionTqH6xNN4We0YWZJ342lkhY3jgIMWY3stO7D8BjlLTig"
       },
       "routineHandler": {
         "handler": "routineHandler.handler",
@@ -438,7 +438,7 @@
         "memory": 1024,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "RoutineHandlerLambdaVersionlFByjWJcdrDuZ4S242HFfSZdrLKQUTZMZ3wavYOjof4"
+        "versionLogicalId": "RoutineHandlerLambdaVersionMY2auunwYFT7k7S6JdJ5uUEGZko7oqikEKojDVm7KYQ"
       },
       "urlHandler": {
         "handler": "urlHandler.handler",
@@ -452,7 +452,7 @@
         "memory": 1024,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "UrlHandlerLambdaVersionZYyN5ONY3cXdtoC4LWBRladSWugbTzNGF55KpmqjM"
+        "versionLogicalId": "UrlHandlerLambdaVersionhzc07lU1yhSiKun1IdTJe0m6RcASAMF3LNVL5nVF0"
       }
     },
     "configValidationMode": "warn",
@@ -472,7 +472,7 @@
         "artifactsS3KeyDirname": "serverless/notion-service/dev/code-artifacts",
         "deploymentBucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
         "artifact": "D:\\repos\\notion-service\\.serverless\\notion-service.zip",
-        "artifactDirectoryName": "serverless/notion-service/dev/1735523887704-2024-12-30T01:58:07.704Z"
+        "artifactDirectoryName": "serverless/notion-service/dev/1735584708876-2024-12-30T18:51:48.876Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -486,7 +486,7 @@
     "artifact": "D:\\repos\\notion-service\\.serverless\\notion-service.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/notion-service/dev/1735523887704-2024-12-30T01:58:07.704Z",
+    "artifactDirectoryName": "serverless/notion-service/dev/1735584708876-2024-12-30T18:51:48.876Z",
     "artifact": "notion-service.zip"
   }
 }
