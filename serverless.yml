@@ -13,7 +13,10 @@ provider:
     NOTION_API_KEY: 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
     NOTION_WORD_LIST_DATABASE_ID: 150c3752e48a803e8593c48e9593332e
     NOTION_ATTEMPTS_DATABASE_ID: 150c3752e48a80768126d6eac82027f7
-    NOTION_TODAY_ATTEMPT_SHORTCUT: 167c3752e48a80978616d2f9791a1a58
+    NOTION_PRACTICE_LIST_DATABASE_ID: 169c3752e48a80e79603f720fe19a222
+    NOTION_ROUTINE_LIST_DATABASE_ID: 168c3752e48a80a8b7a6d6f3d231aa45
+    NOTION_RECORD_LIST_DATABASE_ID: 169c3752e48a80ed86abe75ccb61f7e6
+    NOTION_REPORTS_DATABASE_ID: 169c3752e48a8046b5e4c44669362023
     TELEGRAM_URL: https://api.telegram.org/bot7014099402:AAG15B_W2pW6k2gFRWZ_BJHSSdgJMpsSfRg/sendMessage?chat_id=-1002322494245&text={{message}}&message_thread_id=6
     NODE_ENV: production
 
@@ -31,6 +34,14 @@ functions:
           description: Trigger generate today attempt
     timeout: 900
 
+  routineHandler:
+    handler: routineHandler.handler
+    events:
+      - schedule:
+          rate: cron(0 23 * * ? *)   #Trigger every day at 23:00 UTC - 06:00 GMT+7
+          description: Trigger generate today checklist
+    timeout: 900
+    
   urlHandler:
     handler: urlHandler.handler
     url:

@@ -10,6 +10,9 @@ import { Client } from '@notionhq/client'
 if (process.env.NODE_ENV !== 'production')
     dotenv.config();
 
+// Initialize Notion client
+const notion = new Client({ auth: process.env.NOTION_API_KEY });
+
 /**
  * Send Telegram alert
  * @param {string} message 
@@ -33,24 +36,31 @@ const controllers = new Map();
  */
 const registerController = (method, path, callback) => {
     path = path.endsWith("/") ? path.slice(0, -1) : path;
-    controllers.set(`${method.toUpperCase()} ${path}`, callback);
-    controllers.set(`${method.toUpperCase()} ${path}/`, callback);
-}
 
-registerController("GET", "/", async (event) => {
-    const clientHash = event.queryStringParameters["hash"];
-    const hash = crypto.createHash('sha256');
-    hash.update(process.env.NOTION_API_KEY, 'utf-8');
-    const serverHash = hash.digest('hex');
+    const callbackWithAuthorization = (event) => {
+        if (method === "GET") {
+            const clientHash = event.queryStringParameters["hash"];
+            const hash = crypto.createHash('sha256');
+            hash.update(process.env.NOTION_API_KEY, 'utf-8');
+            const serverHash = hash.digest('hex');
 
-    if (clientHash !== serverHash) {
-        console.log(`Wrong authorization key (${clientHash})`);
-        return {
-            statusCode: 401,
-            body: "Unauthorized"
-        };
+            if (clientHash !== serverHash) {
+                console.log(`Wrong authorization key (${clientHash})`);
+                return {
+                    statusCode: 401,
+                    body: "Unauthorized"
+                };
+            }
+        }
+
+        return callback(event);
     }
 
+    controllers.set(`${method.toUpperCase()} ${path}`, callbackWithAuthorization);
+    controllers.set(`${method.toUpperCase()} ${path}/`, callbackWithAuthorization);
+}
+
+registerController("GET", "/form", async (event) => {
     const htmlContent = fs.readFileSync(path.resolve(process.cwd(), 'static/index.html'), 'utf-8');
     const cssContent = fs.readFileSync(path.resolve(process.cwd(), 'static/styles.css'), 'utf-8');
     const jsContent = fs.readFileSync(path.resolve(process.cwd(), 'static/script.js'), 'utf-8');
@@ -68,7 +78,7 @@ registerController("GET", "/", async (event) => {
     };
 });
 
-registerController("POST", "/", async (event) => {
+registerController("POST", "/form", async (event) => {
     let name = "";
     let ipa = "";
     let meaning = "";
@@ -186,6 +196,67 @@ registerController("POST", "/", async (event) => {
             description: "New word added!"
         })
     };
+});
+
+registerController("GET", "/routine", async(event) => {
+    //get today's routine list
+    const response = await notion.databases.query({
+        database_id: process.env.NOTION_RECORD_LIST_DATABASE_ID,
+        filter: {
+            property: 'Reminder',
+            date: {
+                on_or_after: moment().format('YYYY-MM-DD')
+            }
+        }
+    });
+
+    if (!response.object || response.object !== "list") {
+        throw new Error("Query checklist failed!", {cause: response});
+    }
+
+    //sort records by hour and minute in reminder property
+    const sortedRecords = response.results.sort((a, b) => {
+        const aHour = a.properties["Reminder"].date.start.split("T")[1].split(":")[0];
+        const aMinute = a.properties["Reminder"].date.start.split("T")[1].split(":")[1];
+        const bHour = b.properties["Reminder"].date.start.split("T")[1].split(":")[0];
+        const bMinute = b.properties["Reminder"].date.start.split("T")[1].split(":")[1];
+
+        if (aHour === bHour) {
+            return aMinute - bMinute;
+        }
+        else return aHour - bHour;
+    });
+
+    //map records to a list of object with:
+    // + id: record id
+    // + name: {hour:minute} {Name} ({Progress}/{Requirement})
+    // + hasProgress: true if Requiremnt is not empty
+    const bodyResponse = response.results.map(page => {
+        const hour = page.properties["Reminder"].date.start.split("T")[1].split(":")[0];
+        const minute = page.properties["Reminder"].date.start.split("T")[1].split(":")[1];
+        const name = page.properties["Name"].title[0].text.content.split('|')[0].trim();
+        const progress = page.properties["Progress"].number ?? 0;
+        const requirement = page.properties["Requirement"].number;
+        const isDone = page.properties["Done"].formula.boolean;
+
+        return {
+            id: page.id,
+            name: `${isDone ? "✅" : "❌"} ${hour}:${minute} ${name} (${requirement != null ? (progress.toString() + '/' + requirement.toString()) : (isDone ? "Done" : "Undone")})`,
+            hasProgress: requirement != null
+        };
+    });
+
+    return {
+        statusCode: 200,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyResponse)
+    };
+});
+
+registerController("POST", "/routine", async(event) => {
+
 });
 
 export const handler = async(event) => {

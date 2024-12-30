@@ -22,7 +22,10 @@
                 "NOTION_API_KEY": "<REDACTED>",
                 "NOTION_WORD_LIST_DATABASE_ID": "150c3752e48a803e8593c48e9593332e",
                 "NOTION_ATTEMPTS_DATABASE_ID": "150c3752e48a80768126d6eac82027f7",
-                "NOTION_TODAY_ATTEMPT_SHORTCUT": "167c3752e48a80978616d2f9791a1a58",
+                "NOTION_PRACTICE_LIST_DATABASE_ID": "169c3752e48a80e79603f720fe19a222",
+                "NOTION_ROUTINE_LIST_DATABASE_ID": "168c3752e48a80a8b7a6d6f3d231aa45",
+                "NOTION_RECORD_LIST_DATABASE_ID": "169c3752e48a80ed86abe75ccb61f7e6",
+                "NOTION_REPORTS_DATABASE_ID": "169c3752e48a8046b5e4c44669362023",
                 "TELEGRAM_URL": "https://api.telegram.org/bot7014099402:AAG15B_W2pW6k2gFRWZ_BJHSSdgJMpsSfRg/sendMessage?chat_id=-1002322494245&text={{message}}&message_thread_id=6",
                 "NODE_ENV": "production"
               },
@@ -36,6 +39,12 @@
                     "Type": "AWS::Logs::LogGroup",
                     "Properties": {
                       "LogGroupName": "/aws/lambda/notion-service-dev-generateHandler"
+                    }
+                  },
+                  "RoutineHandlerLogGroup": {
+                    "Type": "AWS::Logs::LogGroup",
+                    "Properties": {
+                      "LogGroupName": "/aws/lambda/notion-service-dev-routineHandler"
                     }
                   },
                   "UrlHandlerLogGroup": {
@@ -127,7 +136,7 @@
                     "Properties": {
                       "Code": {
                         "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
-                        "S3Key": "serverless/notion-service/dev/1735387439203-2024-12-28T12:03:59.203Z/notion-service.zip"
+                        "S3Key": "serverless/notion-service/dev/1735523887704-2024-12-30T01:58:07.704Z/notion-service.zip"
                       },
                       "Handler": "generateHandler.handler",
                       "Runtime": "nodejs20.x",
@@ -139,7 +148,10 @@
                           "NOTION_API_KEY": "<REDACTED>",
                           "NOTION_WORD_LIST_DATABASE_ID": "150c3752e48a803e8593c48e9593332e",
                           "NOTION_ATTEMPTS_DATABASE_ID": "150c3752e48a80768126d6eac82027f7",
-                          "NOTION_TODAY_ATTEMPT_SHORTCUT": "167c3752e48a80978616d2f9791a1a58",
+                          "NOTION_PRACTICE_LIST_DATABASE_ID": "169c3752e48a80e79603f720fe19a222",
+                          "NOTION_ROUTINE_LIST_DATABASE_ID": "168c3752e48a80a8b7a6d6f3d231aa45",
+                          "NOTION_RECORD_LIST_DATABASE_ID": "169c3752e48a80ed86abe75ccb61f7e6",
+                          "NOTION_REPORTS_DATABASE_ID": "169c3752e48a8046b5e4c44669362023",
                           "TELEGRAM_URL": "https://api.telegram.org/bot7014099402:AAG15B_W2pW6k2gFRWZ_BJHSSdgJMpsSfRg/sendMessage?chat_id=-1002322494245&text={{message}}&message_thread_id=6",
                           "NODE_ENV": "production"
                         }
@@ -155,12 +167,48 @@
                       "GenerateHandlerLogGroup"
                     ]
                   },
+                  "RoutineHandlerLambdaFunction": {
+                    "Type": "AWS::Lambda::Function",
+                    "Properties": {
+                      "Code": {
+                        "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
+                        "S3Key": "serverless/notion-service/dev/1735523887704-2024-12-30T01:58:07.704Z/notion-service.zip"
+                      },
+                      "Handler": "routineHandler.handler",
+                      "Runtime": "nodejs20.x",
+                      "FunctionName": "notion-service-dev-routineHandler",
+                      "MemorySize": 1024,
+                      "Timeout": 900,
+                      "Environment": {
+                        "Variables": {
+                          "NOTION_API_KEY": "<REDACTED>",
+                          "NOTION_WORD_LIST_DATABASE_ID": "150c3752e48a803e8593c48e9593332e",
+                          "NOTION_ATTEMPTS_DATABASE_ID": "150c3752e48a80768126d6eac82027f7",
+                          "NOTION_PRACTICE_LIST_DATABASE_ID": "169c3752e48a80e79603f720fe19a222",
+                          "NOTION_ROUTINE_LIST_DATABASE_ID": "168c3752e48a80a8b7a6d6f3d231aa45",
+                          "NOTION_RECORD_LIST_DATABASE_ID": "169c3752e48a80ed86abe75ccb61f7e6",
+                          "NOTION_REPORTS_DATABASE_ID": "169c3752e48a8046b5e4c44669362023",
+                          "TELEGRAM_URL": "https://api.telegram.org/bot7014099402:AAG15B_W2pW6k2gFRWZ_BJHSSdgJMpsSfRg/sendMessage?chat_id=-1002322494245&text={{message}}&message_thread_id=6",
+                          "NODE_ENV": "production"
+                        }
+                      },
+                      "Role": {
+                        "Fn::GetAtt": [
+                          "IamRoleLambdaExecution",
+                          "Arn"
+                        ]
+                      }
+                    },
+                    "DependsOn": [
+                      "RoutineHandlerLogGroup"
+                    ]
+                  },
                   "UrlHandlerLambdaFunction": {
                     "Type": "AWS::Lambda::Function",
                     "Properties": {
                       "Code": {
                         "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
-                        "S3Key": "serverless/notion-service/dev/1735387439203-2024-12-28T12:03:59.203Z/notion-service.zip"
+                        "S3Key": "serverless/notion-service/dev/1735523887704-2024-12-30T01:58:07.704Z/notion-service.zip"
                       },
                       "Handler": "urlHandler.handler",
                       "Runtime": "nodejs20.x",
@@ -172,7 +220,10 @@
                           "NOTION_API_KEY": "<REDACTED>",
                           "NOTION_WORD_LIST_DATABASE_ID": "150c3752e48a803e8593c48e9593332e",
                           "NOTION_ATTEMPTS_DATABASE_ID": "150c3752e48a80768126d6eac82027f7",
-                          "NOTION_TODAY_ATTEMPT_SHORTCUT": "167c3752e48a80978616d2f9791a1a58",
+                          "NOTION_PRACTICE_LIST_DATABASE_ID": "169c3752e48a80e79603f720fe19a222",
+                          "NOTION_ROUTINE_LIST_DATABASE_ID": "168c3752e48a80a8b7a6d6f3d231aa45",
+                          "NOTION_RECORD_LIST_DATABASE_ID": "169c3752e48a80ed86abe75ccb61f7e6",
+                          "NOTION_REPORTS_DATABASE_ID": "169c3752e48a8046b5e4c44669362023",
                           "TELEGRAM_URL": "https://api.telegram.org/bot7014099402:AAG15B_W2pW6k2gFRWZ_BJHSSdgJMpsSfRg/sendMessage?chat_id=-1002322494245&text={{message}}&message_thread_id=6",
                           "NODE_ENV": "production"
                         }
@@ -188,24 +239,34 @@
                       "UrlHandlerLogGroup"
                     ]
                   },
-                  "GenerateHandlerLambdaVersionboBdotRoqEi7pfP7RfxoGFHiIp0JQOyAEjj660ClQoM": {
+                  "GenerateHandlerLambdaVersionmPUza8g0ViceFl01vkYDRl7k9sEpVWmtkeEHnHoBdM": {
                     "Type": "AWS::Lambda::Version",
                     "DeletionPolicy": "Retain",
                     "Properties": {
                       "FunctionName": {
                         "Ref": "GenerateHandlerLambdaFunction"
                       },
-                      "CodeSha256": "+RUt3yrf/yvLStvKy8MnjyQPFN8aX1UR0vnEbprw1Pg="
+                      "CodeSha256": "eoacsb+TkxOPA8nuvj0GtEChTUiTSWmV/oSc+LxxSY4="
                     }
                   },
-                  "UrlHandlerLambdaVersionSKvPXjLrHc9JCFfArQQKngfBlH8siaT9nP2wP45Nc": {
+                  "RoutineHandlerLambdaVersionlFByjWJcdrDuZ4S242HFfSZdrLKQUTZMZ3wavYOjof4": {
+                    "Type": "AWS::Lambda::Version",
+                    "DeletionPolicy": "Retain",
+                    "Properties": {
+                      "FunctionName": {
+                        "Ref": "RoutineHandlerLambdaFunction"
+                      },
+                      "CodeSha256": "eoacsb+TkxOPA8nuvj0GtEChTUiTSWmV/oSc+LxxSY4="
+                    }
+                  },
+                  "UrlHandlerLambdaVersionZYyN5ONY3cXdtoC4LWBRladSWugbTzNGF55KpmqjM": {
                     "Type": "AWS::Lambda::Version",
                     "DeletionPolicy": "Retain",
                     "Properties": {
                       "FunctionName": {
                         "Ref": "UrlHandlerLambdaFunction"
                       },
-                      "CodeSha256": "+RUt3yrf/yvLStvKy8MnjyQPFN8aX1UR0vnEbprw1Pg="
+                      "CodeSha256": "eoacsb+TkxOPA8nuvj0GtEChTUiTSWmV/oSc+LxxSY4="
                     }
                   },
                   "UrlHandlerLambdaFunctionUrl": {
@@ -257,6 +318,44 @@
                         ]
                       }
                     }
+                  },
+                  "RoutineHandlerEventsRuleSchedule1": {
+                    "Type": "AWS::Events::Rule",
+                    "Properties": {
+                      "ScheduleExpression": "cron(0 23 * * ? *)",
+                      "State": "ENABLED",
+                      "Description": "Trigger generate today checklist",
+                      "Targets": [
+                        {
+                          "Arn": {
+                            "Fn::GetAtt": [
+                              "RoutineHandlerLambdaFunction",
+                              "Arn"
+                            ]
+                          },
+                          "Id": "routineHandlerSchedule"
+                        }
+                      ]
+                    }
+                  },
+                  "RoutineHandlerLambdaPermissionEventsRuleSchedule1": {
+                    "Type": "AWS::Lambda::Permission",
+                    "Properties": {
+                      "FunctionName": {
+                        "Fn::GetAtt": [
+                          "RoutineHandlerLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "Action": "lambda:InvokeFunction",
+                      "Principal": "events.amazonaws.com",
+                      "SourceArn": {
+                        "Fn::GetAtt": [
+                          "RoutineHandlerEventsRuleSchedule1",
+                          "Arn"
+                        ]
+                      }
+                    }
                   }
                 },
                 "Outputs": {
@@ -269,16 +368,25 @@
                   "GenerateHandlerLambdaFunctionQualifiedArn": {
                     "Description": "Current Lambda function version",
                     "Value": {
-                      "Ref": "GenerateHandlerLambdaVersionboBdotRoqEi7pfP7RfxoGFHiIp0JQOyAEjj660ClQoM"
+                      "Ref": "GenerateHandlerLambdaVersionmPUza8g0ViceFl01vkYDRl7k9sEpVWmtkeEHnHoBdM"
                     },
                     "Export": {
                       "Name": "sls-notion-service-dev-GenerateHandlerLambdaFunctionQualifiedArn"
                     }
                   },
+                  "RoutineHandlerLambdaFunctionQualifiedArn": {
+                    "Description": "Current Lambda function version",
+                    "Value": {
+                      "Ref": "RoutineHandlerLambdaVersionlFByjWJcdrDuZ4S242HFfSZdrLKQUTZMZ3wavYOjof4"
+                    },
+                    "Export": {
+                      "Name": "sls-notion-service-dev-RoutineHandlerLambdaFunctionQualifiedArn"
+                    }
+                  },
                   "UrlHandlerLambdaFunctionQualifiedArn": {
                     "Description": "Current Lambda function version",
                     "Value": {
-                      "Ref": "UrlHandlerLambdaVersionSKvPXjLrHc9JCFfArQQKngfBlH8siaT9nP2wP45Nc"
+                      "Ref": "UrlHandlerLambdaVersionZYyN5ONY3cXdtoC4LWBRladSWugbTzNGF55KpmqjM"
                     },
                     "Export": {
                       "Name": "sls-notion-service-dev-UrlHandlerLambdaFunctionQualifiedArn"
@@ -308,7 +416,7 @@
               "artifactsS3KeyDirname": "serverless/notion-service/dev/code-artifacts",
               "deploymentBucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
               "artifact": "D:\\repos\\notion-service\\.serverless\\notion-service.zip",
-              "artifactDirectoryName": "serverless/notion-service/dev/1735387439203-2024-12-28T12:03:59.203Z"
+              "artifactDirectoryName": "serverless/notion-service/dev/1735523887704-2024-12-30T01:58:07.704Z"
             },
             "functions": {
               "generateHandler": {
@@ -329,7 +437,27 @@
                 "memory": 1024,
                 "runtime": "nodejs20.x",
                 "vpc": {},
-                "versionLogicalId": "GenerateHandlerLambdaVersionboBdotRoqEi7pfP7RfxoGFHiIp0JQOyAEjj660ClQoM"
+                "versionLogicalId": "GenerateHandlerLambdaVersionmPUza8g0ViceFl01vkYDRl7k9sEpVWmtkeEHnHoBdM"
+              },
+              "routineHandler": {
+                "handler": "routineHandler.handler",
+                "events": [
+                  {
+                    "schedule": {
+                      "rate": [
+                        "cron(0 23 * * ? *)"
+                      ],
+                      "description": "Trigger generate today checklist"
+                    }
+                  }
+                ],
+                "timeout": 900,
+                "name": "notion-service-dev-routineHandler",
+                "package": {},
+                "memory": 1024,
+                "runtime": "nodejs20.x",
+                "vpc": {},
+                "versionLogicalId": "RoutineHandlerLambdaVersionlFByjWJcdrDuZ4S242HFfSZdrLKQUTZMZ3wavYOjof4"
               },
               "urlHandler": {
                 "handler": "urlHandler.handler",
@@ -343,7 +471,7 @@
                 "memory": 1024,
                 "runtime": "nodejs20.x",
                 "vpc": {},
-                "versionLogicalId": "UrlHandlerLambdaVersionSKvPXjLrHc9JCFfArQQKngfBlH8siaT9nP2wP45Nc"
+                "versionLogicalId": "UrlHandlerLambdaVersionZYyN5ONY3cXdtoC4LWBRladSWugbTzNGF55KpmqjM"
               }
             }
           },
@@ -390,7 +518,10 @@
           "NOTION_API_KEY": "<REDACTED>",
           "NOTION_WORD_LIST_DATABASE_ID": "150c3752e48a803e8593c48e9593332e",
           "NOTION_ATTEMPTS_DATABASE_ID": "150c3752e48a80768126d6eac82027f7",
-          "NOTION_TODAY_ATTEMPT_SHORTCUT": "167c3752e48a80978616d2f9791a1a58",
+          "NOTION_PRACTICE_LIST_DATABASE_ID": "169c3752e48a80e79603f720fe19a222",
+          "NOTION_ROUTINE_LIST_DATABASE_ID": "168c3752e48a80a8b7a6d6f3d231aa45",
+          "NOTION_RECORD_LIST_DATABASE_ID": "169c3752e48a80ed86abe75ccb61f7e6",
+          "NOTION_REPORTS_DATABASE_ID": "169c3752e48a8046b5e4c44669362023",
           "TELEGRAM_URL": "https://api.telegram.org/bot7014099402:AAG15B_W2pW6k2gFRWZ_BJHSSdgJMpsSfRg/sendMessage?chat_id=-1002322494245&text={{message}}&message_thread_id=6",
           "NODE_ENV": "production"
         },
@@ -404,6 +535,12 @@
               "Type": "AWS::Logs::LogGroup",
               "Properties": {
                 "LogGroupName": "/aws/lambda/notion-service-dev-generateHandler"
+              }
+            },
+            "RoutineHandlerLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/notion-service-dev-routineHandler"
               }
             },
             "UrlHandlerLogGroup": {
@@ -495,7 +632,7 @@
               "Properties": {
                 "Code": {
                   "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
-                  "S3Key": "serverless/notion-service/dev/1735387439203-2024-12-28T12:03:59.203Z/notion-service.zip"
+                  "S3Key": "serverless/notion-service/dev/1735523887704-2024-12-30T01:58:07.704Z/notion-service.zip"
                 },
                 "Handler": "generateHandler.handler",
                 "Runtime": "nodejs20.x",
@@ -507,7 +644,10 @@
                     "NOTION_API_KEY": "<REDACTED>",
                     "NOTION_WORD_LIST_DATABASE_ID": "150c3752e48a803e8593c48e9593332e",
                     "NOTION_ATTEMPTS_DATABASE_ID": "150c3752e48a80768126d6eac82027f7",
-                    "NOTION_TODAY_ATTEMPT_SHORTCUT": "167c3752e48a80978616d2f9791a1a58",
+                    "NOTION_PRACTICE_LIST_DATABASE_ID": "169c3752e48a80e79603f720fe19a222",
+                    "NOTION_ROUTINE_LIST_DATABASE_ID": "168c3752e48a80a8b7a6d6f3d231aa45",
+                    "NOTION_RECORD_LIST_DATABASE_ID": "169c3752e48a80ed86abe75ccb61f7e6",
+                    "NOTION_REPORTS_DATABASE_ID": "169c3752e48a8046b5e4c44669362023",
                     "TELEGRAM_URL": "https://api.telegram.org/bot7014099402:AAG15B_W2pW6k2gFRWZ_BJHSSdgJMpsSfRg/sendMessage?chat_id=-1002322494245&text={{message}}&message_thread_id=6",
                     "NODE_ENV": "production"
                   }
@@ -523,12 +663,48 @@
                 "GenerateHandlerLogGroup"
               ]
             },
+            "RoutineHandlerLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
+                  "S3Key": "serverless/notion-service/dev/1735523887704-2024-12-30T01:58:07.704Z/notion-service.zip"
+                },
+                "Handler": "routineHandler.handler",
+                "Runtime": "nodejs20.x",
+                "FunctionName": "notion-service-dev-routineHandler",
+                "MemorySize": 1024,
+                "Timeout": 900,
+                "Environment": {
+                  "Variables": {
+                    "NOTION_API_KEY": "<REDACTED>",
+                    "NOTION_WORD_LIST_DATABASE_ID": "150c3752e48a803e8593c48e9593332e",
+                    "NOTION_ATTEMPTS_DATABASE_ID": "150c3752e48a80768126d6eac82027f7",
+                    "NOTION_PRACTICE_LIST_DATABASE_ID": "169c3752e48a80e79603f720fe19a222",
+                    "NOTION_ROUTINE_LIST_DATABASE_ID": "168c3752e48a80a8b7a6d6f3d231aa45",
+                    "NOTION_RECORD_LIST_DATABASE_ID": "169c3752e48a80ed86abe75ccb61f7e6",
+                    "NOTION_REPORTS_DATABASE_ID": "169c3752e48a8046b5e4c44669362023",
+                    "TELEGRAM_URL": "https://api.telegram.org/bot7014099402:AAG15B_W2pW6k2gFRWZ_BJHSSdgJMpsSfRg/sendMessage?chat_id=-1002322494245&text={{message}}&message_thread_id=6",
+                    "NODE_ENV": "production"
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "RoutineHandlerLogGroup"
+              ]
+            },
             "UrlHandlerLambdaFunction": {
               "Type": "AWS::Lambda::Function",
               "Properties": {
                 "Code": {
                   "S3Bucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
-                  "S3Key": "serverless/notion-service/dev/1735387439203-2024-12-28T12:03:59.203Z/notion-service.zip"
+                  "S3Key": "serverless/notion-service/dev/1735523887704-2024-12-30T01:58:07.704Z/notion-service.zip"
                 },
                 "Handler": "urlHandler.handler",
                 "Runtime": "nodejs20.x",
@@ -540,7 +716,10 @@
                     "NOTION_API_KEY": "<REDACTED>",
                     "NOTION_WORD_LIST_DATABASE_ID": "150c3752e48a803e8593c48e9593332e",
                     "NOTION_ATTEMPTS_DATABASE_ID": "150c3752e48a80768126d6eac82027f7",
-                    "NOTION_TODAY_ATTEMPT_SHORTCUT": "167c3752e48a80978616d2f9791a1a58",
+                    "NOTION_PRACTICE_LIST_DATABASE_ID": "169c3752e48a80e79603f720fe19a222",
+                    "NOTION_ROUTINE_LIST_DATABASE_ID": "168c3752e48a80a8b7a6d6f3d231aa45",
+                    "NOTION_RECORD_LIST_DATABASE_ID": "169c3752e48a80ed86abe75ccb61f7e6",
+                    "NOTION_REPORTS_DATABASE_ID": "169c3752e48a8046b5e4c44669362023",
                     "TELEGRAM_URL": "https://api.telegram.org/bot7014099402:AAG15B_W2pW6k2gFRWZ_BJHSSdgJMpsSfRg/sendMessage?chat_id=-1002322494245&text={{message}}&message_thread_id=6",
                     "NODE_ENV": "production"
                   }
@@ -556,24 +735,34 @@
                 "UrlHandlerLogGroup"
               ]
             },
-            "GenerateHandlerLambdaVersionboBdotRoqEi7pfP7RfxoGFHiIp0JQOyAEjj660ClQoM": {
+            "GenerateHandlerLambdaVersionmPUza8g0ViceFl01vkYDRl7k9sEpVWmtkeEHnHoBdM": {
               "Type": "AWS::Lambda::Version",
               "DeletionPolicy": "Retain",
               "Properties": {
                 "FunctionName": {
                   "Ref": "GenerateHandlerLambdaFunction"
                 },
-                "CodeSha256": "+RUt3yrf/yvLStvKy8MnjyQPFN8aX1UR0vnEbprw1Pg="
+                "CodeSha256": "eoacsb+TkxOPA8nuvj0GtEChTUiTSWmV/oSc+LxxSY4="
               }
             },
-            "UrlHandlerLambdaVersionSKvPXjLrHc9JCFfArQQKngfBlH8siaT9nP2wP45Nc": {
+            "RoutineHandlerLambdaVersionlFByjWJcdrDuZ4S242HFfSZdrLKQUTZMZ3wavYOjof4": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "RoutineHandlerLambdaFunction"
+                },
+                "CodeSha256": "eoacsb+TkxOPA8nuvj0GtEChTUiTSWmV/oSc+LxxSY4="
+              }
+            },
+            "UrlHandlerLambdaVersionZYyN5ONY3cXdtoC4LWBRladSWugbTzNGF55KpmqjM": {
               "Type": "AWS::Lambda::Version",
               "DeletionPolicy": "Retain",
               "Properties": {
                 "FunctionName": {
                   "Ref": "UrlHandlerLambdaFunction"
                 },
-                "CodeSha256": "+RUt3yrf/yvLStvKy8MnjyQPFN8aX1UR0vnEbprw1Pg="
+                "CodeSha256": "eoacsb+TkxOPA8nuvj0GtEChTUiTSWmV/oSc+LxxSY4="
               }
             },
             "UrlHandlerLambdaFunctionUrl": {
@@ -625,6 +814,44 @@
                   ]
                 }
               }
+            },
+            "RoutineHandlerEventsRuleSchedule1": {
+              "Type": "AWS::Events::Rule",
+              "Properties": {
+                "ScheduleExpression": "cron(0 23 * * ? *)",
+                "State": "ENABLED",
+                "Description": "Trigger generate today checklist",
+                "Targets": [
+                  {
+                    "Arn": {
+                      "Fn::GetAtt": [
+                        "RoutineHandlerLambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "Id": "routineHandlerSchedule"
+                  }
+                ]
+              }
+            },
+            "RoutineHandlerLambdaPermissionEventsRuleSchedule1": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "RoutineHandlerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "events.amazonaws.com",
+                "SourceArn": {
+                  "Fn::GetAtt": [
+                    "RoutineHandlerEventsRuleSchedule1",
+                    "Arn"
+                  ]
+                }
+              }
             }
           },
           "Outputs": {
@@ -637,16 +864,25 @@
             "GenerateHandlerLambdaFunctionQualifiedArn": {
               "Description": "Current Lambda function version",
               "Value": {
-                "Ref": "GenerateHandlerLambdaVersionboBdotRoqEi7pfP7RfxoGFHiIp0JQOyAEjj660ClQoM"
+                "Ref": "GenerateHandlerLambdaVersionmPUza8g0ViceFl01vkYDRl7k9sEpVWmtkeEHnHoBdM"
               },
               "Export": {
                 "Name": "sls-notion-service-dev-GenerateHandlerLambdaFunctionQualifiedArn"
               }
             },
+            "RoutineHandlerLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "RoutineHandlerLambdaVersionlFByjWJcdrDuZ4S242HFfSZdrLKQUTZMZ3wavYOjof4"
+              },
+              "Export": {
+                "Name": "sls-notion-service-dev-RoutineHandlerLambdaFunctionQualifiedArn"
+              }
+            },
             "UrlHandlerLambdaFunctionQualifiedArn": {
               "Description": "Current Lambda function version",
               "Value": {
-                "Ref": "UrlHandlerLambdaVersionSKvPXjLrHc9JCFfArQQKngfBlH8siaT9nP2wP45Nc"
+                "Ref": "UrlHandlerLambdaVersionZYyN5ONY3cXdtoC4LWBRladSWugbTzNGF55KpmqjM"
               },
               "Export": {
                 "Name": "sls-notion-service-dev-UrlHandlerLambdaFunctionQualifiedArn"
@@ -676,7 +912,7 @@
         "artifactsS3KeyDirname": "serverless/notion-service/dev/code-artifacts",
         "deploymentBucket": "serverless-framework-deployments-ap-southeast-1-37a7e067-2a85",
         "artifact": "D:\\repos\\notion-service\\.serverless\\notion-service.zip",
-        "artifactDirectoryName": "serverless/notion-service/dev/1735387439203-2024-12-28T12:03:59.203Z"
+        "artifactDirectoryName": "serverless/notion-service/dev/1735523887704-2024-12-30T01:58:07.704Z"
       },
       "functions": {
         "generateHandler": {
@@ -697,7 +933,27 @@
           "memory": 1024,
           "runtime": "nodejs20.x",
           "vpc": {},
-          "versionLogicalId": "GenerateHandlerLambdaVersionboBdotRoqEi7pfP7RfxoGFHiIp0JQOyAEjj660ClQoM"
+          "versionLogicalId": "GenerateHandlerLambdaVersionmPUza8g0ViceFl01vkYDRl7k9sEpVWmtkeEHnHoBdM"
+        },
+        "routineHandler": {
+          "handler": "routineHandler.handler",
+          "events": [
+            {
+              "schedule": {
+                "rate": [
+                  "cron(0 23 * * ? *)"
+                ],
+                "description": "Trigger generate today checklist"
+              }
+            }
+          ],
+          "timeout": 900,
+          "name": "notion-service-dev-routineHandler",
+          "package": {},
+          "memory": 1024,
+          "runtime": "nodejs20.x",
+          "vpc": {},
+          "versionLogicalId": "RoutineHandlerLambdaVersionlFByjWJcdrDuZ4S242HFfSZdrLKQUTZMZ3wavYOjof4"
         },
         "urlHandler": {
           "handler": "urlHandler.handler",
@@ -711,11 +967,11 @@
           "memory": 1024,
           "runtime": "nodejs20.x",
           "vpc": {},
-          "versionLogicalId": "UrlHandlerLambdaVersionSKvPXjLrHc9JCFfArQQKngfBlH8siaT9nP2wP45Nc"
+          "versionLogicalId": "UrlHandlerLambdaVersionZYyN5ONY3cXdtoC4LWBRladSWugbTzNGF55KpmqjM"
         }
       }
     },
-    "serviceRawFile": "# \"org\" ensures this Service is used with the correct Serverless Framework Access Key.\r\norg: gootube\r\n# \"app\" enables Serverless Framework Dashboard features and sharing them with other Services.\r\napp: gootube\r\n# \"service\" is the name of this project. This will also be added to your AWS resource names.\r\nservice: notion-service\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: nodejs20.x\r\n  region: ap-southeast-1\r\n  environment:\r\n    NOTION_API_KEY: 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\r\n    NOTION_WORD_LIST_DATABASE_ID: 150c3752e48a803e8593c48e9593332e\r\n    NOTION_ATTEMPTS_DATABASE_ID: 150c3752e48a80768126d6eac82027f7\r\n    NOTION_TODAY_ATTEMPT_SHORTCUT: 167c3752e48a80978616d2f9791a1a58\r\n    TELEGRAM_URL: https://api.telegram.org/bot7014099402:AAG15B_W2pW6k2gFRWZ_BJHSSdgJMpsSfRg/sendMessage?chat_id=-1002322494245&text={{message}}&message_thread_id=6\r\n    NODE_ENV: production\r\n\r\npackage:\r\n  patterns:\r\n    - '!.env'\r\n    - '!README.md'\r\n\r\nfunctions:\r\n  generateHandler:\r\n    handler: generateHandler.handler\r\n    events:\r\n      - schedule:\r\n          rate: cron(0 1 * * ? *)   #Trigger every day at 01:00 UTC - 08:00 GMT+7\r\n          description: Trigger generate today attempt\r\n    timeout: 900\r\n\r\n  urlHandler:\r\n    handler: urlHandler.handler\r\n    url:\r\n      authorizer: aws_iam\r\n    timeout: 60\r\n",
+    "serviceRawFile": "# \"org\" ensures this Service is used with the correct Serverless Framework Access Key.\r\norg: gootube\r\n# \"app\" enables Serverless Framework Dashboard features and sharing them with other Services.\r\napp: gootube\r\n# \"service\" is the name of this project. This will also be added to your AWS resource names.\r\nservice: notion-service\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: nodejs20.x\r\n  region: ap-southeast-1\r\n  environment:\r\n    NOTION_API_KEY: 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\r\n    NOTION_WORD_LIST_DATABASE_ID: 150c3752e48a803e8593c48e9593332e\r\n    NOTION_ATTEMPTS_DATABASE_ID: 150c3752e48a80768126d6eac82027f7\r\n    NOTION_PRACTICE_LIST_DATABASE_ID: 169c3752e48a80e79603f720fe19a222\r\n    NOTION_ROUTINE_LIST_DATABASE_ID: 168c3752e48a80a8b7a6d6f3d231aa45\r\n    NOTION_RECORD_LIST_DATABASE_ID: 169c3752e48a80ed86abe75ccb61f7e6\r\n    NOTION_REPORTS_DATABASE_ID: 169c3752e48a8046b5e4c44669362023\r\n    TELEGRAM_URL: https://api.telegram.org/bot7014099402:AAG15B_W2pW6k2gFRWZ_BJHSSdgJMpsSfRg/sendMessage?chat_id=-1002322494245&text={{message}}&message_thread_id=6\r\n    NODE_ENV: production\r\n\r\npackage:\r\n  patterns:\r\n    - '!.env'\r\n    - '!README.md'\r\n\r\nfunctions:\r\n  generateHandler:\r\n    handler: generateHandler.handler\r\n    events:\r\n      - schedule:\r\n          rate: cron(0 1 * * ? *)   #Trigger every day at 01:00 UTC - 08:00 GMT+7\r\n          description: Trigger generate today attempt\r\n    timeout: 900\r\n\r\n  routineHandler:\r\n    handler: routineHandler.handler\r\n    events:\r\n      - schedule:\r\n          rate: cron(0 23 * * ? *)   #Trigger every day at 23:00 UTC - 06:00 GMT+7\r\n          description: Trigger generate today checklist\r\n    timeout: 900\r\n    \r\n  urlHandler:\r\n    handler: urlHandler.handler\r\n    url:\r\n      authorizer: aws_iam\r\n    timeout: 60\r\n",
     "command": [
       "deploy"
     ],
@@ -761,9 +1017,15 @@
     "serviceUniqueId": "arn:aws:cloudformation:ap-southeast-1:467614041356:stack/notion-service-dev/8e0ed5a0-b21c-11ef-9822-02ec09f151a9",
     "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-southeast-1:467614041356:stack/notion-service-dev/8e0ed5a0-b21c-11ef-9822-02ec09f151a9",
     "serviceProviderAwsCfStackCreated": "2024-12-04T08:48:39.271Z",
-    "serviceProviderAwsCfStackUpdated": "2024-12-28T12:04:08.163Z",
+    "serviceProviderAwsCfStackUpdated": "2024-12-30T01:58:19.306Z",
     "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
     "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "RoutineHandlerLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-southeast-1:467614041356:function:notion-service-dev-routineHandler:4",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-notion-service-dev-RoutineHandlerLambdaFunctionQualifiedArn"
+      },
       {
         "OutputKey": "UrlHandlerLambdaFunctionUrl",
         "OutputValue": "https://2bceh23pck5zovrildrpothq4q0kqfst.lambda-url.ap-southeast-1.on.aws/",
@@ -772,13 +1034,13 @@
       },
       {
         "OutputKey": "GenerateHandlerLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-southeast-1:467614041356:function:notion-service-dev-generateHandler:27",
+        "OutputValue": "arn:aws:lambda:ap-southeast-1:467614041356:function:notion-service-dev-generateHandler:31",
         "Description": "Current Lambda function version",
         "ExportName": "sls-notion-service-dev-GenerateHandlerLambdaFunctionQualifiedArn"
       },
       {
         "OutputKey": "UrlHandlerLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-southeast-1:467614041356:function:notion-service-dev-urlHandler:28",
+        "OutputValue": "arn:aws:lambda:ap-southeast-1:467614041356:function:notion-service-dev-urlHandler:32",
         "Description": "Current Lambda function version",
         "ExportName": "sls-notion-service-dev-UrlHandlerLambdaFunctionQualifiedArn"
       },
