@@ -116,6 +116,46 @@ const createTodayReport = async() => {
  * @param {*} report 
  */
 const createTodayChecklist = async(routines, report) => {
+    //check if today is holiday
+    // let isHoliday = false;
+    // try {
+    //     //get all holidays in holidays database that is either annual or after today
+    //     //if today is a holiday, check for "Active on holidays" property of routine
+    //     const response = await notion.databases.query({
+    //         database_id: process.env.NOTION_HOLIDAYS_DATABASE_ID,
+    //         filter: {
+    //             or: [
+    //                 {
+    //                     property: 'Annual',
+    //                     checkbox: {
+    //                         equals: true
+    //                     }
+    //                 },
+    //                 {
+    //                     property: 'Dates',
+    //                     date: {
+    //                         on_or_after: todayDate
+    //                     }
+    //                 }
+    //             ]
+    //         }
+    //     });
+
+    //     if (!response.object || response.object !== 'list') {
+    //         throw new Error("Query holidays failed!", {cause: response});
+    //     }
+
+    //     const holidays = response.results.map(holiday => [holiday.properties.Dates.date.start, holiday.properties.Dates.date.end]);
+    //     isHoliday = holidays.some(holiday => {
+    //         if (holiday.properties['Annual'].checkbox) {
+    //             //check if today is the same day as annual holiday
+                
+    //         }
+    //     });
+    // } catch(error) {
+    //     throw new Error("Error getting holidays", {cause: error});
+    // }
+
     try {
         await Promise.all(
             routines.map(async(routine) => {
@@ -152,7 +192,7 @@ const createTodayChecklist = async(routines, report) => {
                         },
                         'Reminder': {
                             date: {
-                                start: moment().set({
+                                start: moment().tz('Asia/Bangkok').set({
                                     hour: routine.properties["Remind hour"].number,
                                     minute: routine.properties["Remind minute"].number,
                                     second: 0,

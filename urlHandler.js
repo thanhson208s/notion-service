@@ -231,20 +231,30 @@ registerController("GET", "/routine", async(event) => {
     // + id: record id
     // + name: {hour:minute} {Name} ({Progress}/{Requirement})
     // + hasProgress: true if Requiremnt is not empty
-    const bodyResponse = response.results.map(page => {
-        const hour = page.properties["Reminder"].date.start.split("T")[1].split(":")[0];
-        const minute = page.properties["Reminder"].date.start.split("T")[1].split(":")[1];
-        const name = page.properties["Name"].title[0].text.content.split('|')[0].trim();
-        const progress = page.properties["Progress"].number ?? 0;
-        const requirement = page.properties["Requirement"].number;
-        const isDone = page.properties["Done"].formula.boolean;
+    const bodyResponse = await Promise.all(
+        response.results.map(async(page) => {
+            const hour = page.properties["Reminder"].date.start.split("T")[1].split(":")[0];
+            const minute = page.properties["Reminder"].date.start.split("T")[1].split(":")[1];
+            const name = page.properties["Name"].title[0].text.content.split('|')[0].trim();
+            const progress = page.properties["Progress"].number ?? 0;
+            const requirement = page.properties["Requirement"].number;
+            const isDone = page.properties["Done"].formula.boolean;
 
-        return {
-            id: page.id,
-            name: `${isDone ? "✅" : "❌"} ${hour}:${minute} ${name} (${requirement != null ? (progress.toString() + '/' + requirement.toString()) : (isDone ? "Done" : "Undone")})`,
-            hasProgress: requirement != null
-        };
-    });
+            const responseRoutine = await notion.pages.retrieve({
+                page_id: page.properties["Routine"].relation[0].id
+            });
+
+            if (!responseRoutine.object || responseRoutine.object !== "page") {
+                throw new Error("Retrieve routine failed!", {cause: responseRoutine});
+            }
+
+            return {
+                id: page.id,
+                name: `${isDone ? "✅" : "❌"} ${hour}:${minute} ${name}${requirement != null ? (" (" + progress.toString() + '/' + requirement.toString()) + ")" : ""} 🔥${responseRoutine.properties["Streak"].formula.number}`,
+                hasProgress: requirement != null
+            };
+        })
+    );
 
     return {
         statusCode: 200,
@@ -256,7 +266,72 @@ registerController("GET", "/routine", async(event) => {
 });
 
 registerController("POST", "/routine", async(event) => {
+    let id = "";
+    let delta = 0;
 
+    try {
+        const data = JSON.parse(event.body);
+        id = data["id"];
+        if (!id) throw new Error("Invalid or empty id!");
+        delta = data["progress"];
+        if (!delta) throw new Error("Invalid or empty progress!");
+    } catch(error) {
+        console.log("Error parsing request body:", error);
+        return {
+            statusCode: 400,
+            headers: {
+                'Content-Type': 'text/plain'
+            },
+            body: "Invalid data!"
+        };
+    }
+
+    try {
+        const responseRetrieve = await notion.pages.retrieve({
+            page_id: id
+        });
+
+        if (!responseRetrieve.object || responseRetrieve.object !== "page") {
+            throw new Error("Retrieve record failed!", {cause: response});
+        }
+
+        const responseUpdate = await notion.pages.update({
+            page_id: id,
+            properties: {
+                "Progress": {
+                    number: delta + (responseRetrieve.properties["Progress"].number ?? 0)
+                }
+            }
+        });
+
+        if (!responseUpdate.object || responseUpdate.object !== "page") {
+            throw new Error("Update record failed!", {cause: response});
+        }
+
+        const hour = responseUpdate.properties["Reminder"].date.start.split("T")[1].split(":")[0];
+        const minute = responseUpdate.properties["Reminder"].date.start.split("T")[1].split(":")[1];
+        const name = responseUpdate.properties["Name"].title[0].text.content.split('|')[0].trim();
+        const progress = responseUpdate.properties["Progress"].number ?? 0;
+        const requirement = responseUpdate.properties["Requirement"].number;
+        const isDone = responseUpdate.properties["Done"].formula.boolean;
+
+        return {
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'text/plain'
+            },
+            body: `${isDone ? "✅" : "❌"} ${hour}:${minute} ${name} (${requirement != null ? (progress.toString() + '/' + requirement.toString()) : (isDone ? "Done" : "Undone")})`
+        };
+    } catch(error) {
+        console.log(error);
+        return {
+            statusCode: 502,
+            headers: {
+                'Content-Type': 'text/plain'
+            },
+            body: "Notion error!"
+        };
+    }
 });
 
 export const handler = async(event) => {
